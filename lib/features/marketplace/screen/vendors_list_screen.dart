@@ -11,7 +11,7 @@ import 'package:shimmer/shimmer.dart';
 
 /// A stunning, modern vendors list screen with search, filters, and beautiful animations
 class VendorsListScreen extends StatefulWidget {
-  const VendorsListScreen({Key? key}) : super(key: key);
+  const VendorsListScreen({super.key});
 
   @override
   State<VendorsListScreen> createState() => _VendorsListScreenState();
@@ -50,9 +50,11 @@ class _VendorsListScreenState extends State<VendorsListScreen>
     // Search filter
     if (_searchQuery.isNotEmpty) {
       filtered = filtered
-          .where((v) =>
-              v.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-              v.tagline.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .where(
+            (v) =>
+                v.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                v.tagline.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
           .toList();
     }
 
@@ -74,10 +76,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                AppColors.primary25,
-                AppColors.appWhite,
-              ],
+              colors: [AppColors.primary25, AppColors.appWhite],
             ),
           ),
           child: SafeArea(
@@ -130,10 +129,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
       foregroundColor: AppColors.neutral900,
       title: Text(
         'Explore Vendors',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 24.sp,
-        ),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.sp),
       ),
       actions: [
         IconButton(
@@ -165,7 +161,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           borderRadius: BorderRadius.circular(28.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -178,10 +174,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           },
           decoration: InputDecoration(
             hintText: 'Search vendors...',
-            hintStyle: TextStyle(
-              color: AppColors.neutral400,
-              fontSize: 16.sp,
-            ),
+            hintStyle: TextStyle(color: AppColors.neutral400, fontSize: 16.sp),
             prefixIcon: Icon(
               Icons.search_rounded,
               color: AppColors.primary,
@@ -239,7 +232,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
               ),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               elevation: isSelected ? 4 : 0,
-              shadowColor: AppColors.primary.withOpacity(0.4),
+              shadowColor: AppColors.primary.withValues(alpha: 0.4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24.r),
                 side: BorderSide(
@@ -266,10 +259,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
       ),
       itemCount: vendors.length,
       itemBuilder: (context, index) {
-        return _AnimatedVendorCard(
-          vendor: vendors[index],
-          index: index,
-        );
+        return _AnimatedVendorCard(vendor: vendors[index], index: index);
       },
     );
   }
@@ -281,10 +271,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
       itemCount: vendors.length,
       separatorBuilder: (_, __) => SizedBox(height: 16.h),
       itemBuilder: (context, index) {
-        return _AnimatedVendorListCard(
-          vendor: vendors[index],
-          index: index,
-        );
+        return _AnimatedVendorListCard(vendor: vendors[index], index: index);
       },
     );
   }
@@ -317,11 +304,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.store_outlined,
-            size: 80.sp,
-            color: AppColors.neutral400,
-          ),
+          Icon(Icons.store_outlined, size: 80.sp, color: AppColors.neutral400),
           SizedBox(height: 16.h),
           Text(
             'No vendors found',
@@ -334,10 +317,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           SizedBox(height: 8.h),
           Text(
             'Try adjusting your search or filters',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.neutral600,
-            ),
+            style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
           ),
         ],
       ),
@@ -369,10 +349,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
             child: Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: AppColors.neutral600,
-              ),
+              style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
             ),
           ),
           SizedBox(height: 24.h),
@@ -471,10 +448,7 @@ class _AnimatedVendorCard extends StatefulWidget {
   final VendorModel vendor;
   final int index;
 
-  const _AnimatedVendorCard({
-    required this.vendor,
-    required this.index,
-  });
+  const _AnimatedVendorCard({required this.vendor, required this.index});
 
   @override
   State<_AnimatedVendorCard> createState() => _AnimatedVendorCardState();
@@ -493,12 +467,14 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     Future.delayed(Duration(milliseconds: widget.index * 100), () {
       if (mounted) _controller.forward();
@@ -540,7 +516,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: gradient[0].withOpacity(0.3),
+                  color: gradient[0].withValues(alpha: 0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 8),
                 ),
@@ -566,7 +542,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            AppColors.black.withOpacity(0.7),
+                            AppColors.black.withValues(alpha: 0.7),
                           ],
                         ),
                       ),
@@ -583,7 +559,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.black.withOpacity(0.2),
+                            color: AppColors.black.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -607,7 +583,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.success.withOpacity(0.4),
+                            color: AppColors.success.withValues(alpha: 0.4),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -643,7 +619,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                         Text(
                           widget.vendor.tagline,
                           style: TextStyle(
-                            color: AppColors.white.withOpacity(0.9),
+                            color: AppColors.white.withValues(alpha: 0.9),
                             fontSize: 12.sp,
                           ),
                           maxLines: 1,
@@ -671,22 +647,28 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                               width: 4.w,
                               height: 4.h,
                               decoration: BoxDecoration(
-                                color: AppColors.white.withOpacity(0.6),
+                                color: AppColors.white.withValues(alpha: 0.6),
                                 shape: BoxShape.circle,
                               ),
                             ),
                             SizedBox(width: 8.w),
                             Icon(
                               Icons.local_shipping_outlined,
-                              color: AppColors.white.withOpacity(0.9),
+                              color: AppColors.white.withValues(alpha: 0.9),
                               size: 14.sp,
                             ),
                             SizedBox(width: 4.w),
-                            Text(
-                              'Fast Delivery',
-                              style: TextStyle(
-                                color: AppColors.white.withOpacity(0.9),
-                                fontSize: 12.sp,
+                            // Make the label flexible to avoid overflow on narrow cards
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Text(
+                                'Fast Delivery',
+                                style: TextStyle(
+                                  color: AppColors.white.withValues(alpha: 0.9),
+                                  fontSize: 12.sp,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -709,10 +691,7 @@ class _AnimatedVendorListCard extends StatefulWidget {
   final VendorModel vendor;
   final int index;
 
-  const _AnimatedVendorListCard({
-    required this.vendor,
-    required this.index,
-  });
+  const _AnimatedVendorListCard({required this.vendor, required this.index});
 
   @override
   State<_AnimatedVendorListCard> createState() =>
@@ -736,9 +715,10 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
       begin: const Offset(0.3, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     Future.delayed(Duration(milliseconds: widget.index * 100), () {
       if (mounted) _controller.forward();
@@ -774,7 +754,7 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.neutral300.withOpacity(0.5),
+                  color: AppColors.neutral300.withValues(alpha: 0.5),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -806,7 +786,7 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
                                 end: Alignment.centerRight,
                                 colors: [
                                   Colors.transparent,
-                                  AppColors.black.withOpacity(0.3),
+                                  AppColors.black.withValues(alpha: 0.3),
                                 ],
                               ),
                             ),
@@ -828,8 +808,9 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
                           children: [
                             CircleAvatar(
                               radius: 24.r,
-                              backgroundImage:
-                                  NetworkImage(widget.vendor.logoUrl),
+                              backgroundImage: NetworkImage(
+                                widget.vendor.logoUrl,
+                              ),
                               backgroundColor: AppColors.white,
                             ),
                             SizedBox(width: 12.w),
@@ -900,6 +881,7 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     Icons.local_shipping_outlined,
@@ -907,12 +889,18 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
                                     size: 14.sp,
                                   ),
                                   SizedBox(width: 4.w),
-                                  Text(
-                                    'Fast',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w600,
+                                  // Make label flexible to avoid overflow
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: Text(
+                                      'Fast',
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],

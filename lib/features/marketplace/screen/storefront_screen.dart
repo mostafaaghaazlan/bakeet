@@ -20,10 +20,10 @@ class StorefrontScreen extends StatefulWidget {
   final String vendorName;
 
   const StorefrontScreen({
-    Key? key,
+    super.key,
     required this.vendorId,
     required this.vendorName,
-  }) : super(key: key);
+  });
 
   @override
   State<StorefrontScreen> createState() => _StorefrontScreenState();
@@ -66,8 +66,9 @@ class _StorefrontScreenState extends State<StorefrontScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => StorefrontCubit(MarketplaceRepository())
-        ..loadProductsForVendor(widget.vendorId),
+      create: (_) =>
+          StorefrontCubit(MarketplaceRepository())
+            ..loadProductsForVendor(widget.vendorId),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: AppColors.appWhite,
@@ -89,8 +90,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
                     slivers: [
-                      if (snapshot.hasData)
-                        _buildVendorHeader(snapshot.data!),
+                      if (snapshot.hasData) _buildVendorHeader(snapshot.data!),
                       SliverToBoxAdapter(child: SizedBox(height: 24.h)),
                       _buildCategoryFilters(),
                       SliverToBoxAdapter(child: SizedBox(height: 16.h)),
@@ -124,7 +124,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
   Future<VendorModel?> _getVendor(MarketplaceRepository repository) async {
     final vendors = await repository.getVendors();
     try {
-      return vendors.firstWhere((v) => v.id == widget.vendorId) as VendorModel;
+      return vendors.firstWhere((v) => v.id == widget.vendorId);
     } catch (e) {
       return null;
     }
@@ -133,19 +133,16 @@ class _StorefrontScreenState extends State<StorefrontScreen>
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: _showAppBarTitle ? 4 : 0,
-      backgroundColor:
-          _showAppBarTitle ? AppColors.white : Colors.transparent,
-      foregroundColor:
-          _showAppBarTitle ? AppColors.neutral900 : AppColors.white,
+      backgroundColor: _showAppBarTitle ? AppColors.white : Colors.transparent,
+      foregroundColor: _showAppBarTitle
+          ? AppColors.neutral900
+          : AppColors.white,
       title: AnimatedOpacity(
         opacity: _showAppBarTitle ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 200),
         child: Text(
           widget.vendorName,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.sp,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
         ),
       ),
       actions: [
@@ -169,16 +166,13 @@ class _StorefrontScreenState extends State<StorefrontScreen>
       child: Stack(
         children: [
           // Banner Image
-          Container(
+          SizedBox(
             height: 280.h,
             width: double.infinity,
             child: Stack(
               fit: StackFit.expand,
               children: [
-                CachedImage(
-                  imageUrl: vendor.bannerUrl,
-                  fit: BoxFit.cover,
-                ),
+                CachedImage(imageUrl: vendor.bannerUrl, fit: BoxFit.cover),
                 // Gradient Overlay
                 Container(
                   decoration: BoxDecoration(
@@ -186,8 +180,8 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -210,7 +204,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.black.withOpacity(0.3),
+                        color: AppColors.black.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -238,6 +232,8 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                                 fontSize: 24.sp,
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Container(
@@ -258,25 +254,28 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                       Text(
                         vendor.tagline,
                         style: TextStyle(
-                          color: AppColors.white.withOpacity(0.9),
+                          color: AppColors.white.withValues(alpha: 0.9),
                           fontSize: 14.sp,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 12.h),
-                      Row(
+                      // Use Wrap so chips can flow to next line on narrow widths
+                      Wrap(
+                        spacing: 12.w,
+                        runSpacing: 8.h,
                         children: [
                           _buildInfoChip(
                             Icons.star_rounded,
                             '4.8',
                             AppColors.yellow,
                           ),
-                          SizedBox(width: 12.w),
                           _buildInfoChip(
                             Icons.inventory_2_outlined,
                             '120+ Products',
                             AppColors.primary,
                           ),
-                          SizedBox(width: 12.w),
                           _buildInfoChip(
                             Icons.local_shipping_outlined,
                             'Fast',
@@ -299,10 +298,10 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: AppColors.white.withOpacity(0.2),
+        color: AppColors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.white.withOpacity(0.3),
+          color: AppColors.white.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -353,11 +352,13 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                 elevation: isSelected ? 4 : 1,
-                shadowColor: AppColors.primary.withOpacity(0.4),
+                shadowColor: AppColors.primary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.r),
                   side: BorderSide(
-                    color: isSelected ? AppColors.primary : AppColors.neutral300,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.neutral300,
                     width: isSelected ? 0 : 1,
                   ),
                 ),
@@ -444,16 +445,13 @@ class _StorefrontScreenState extends State<StorefrontScreen>
         mainAxisSpacing: 16.h,
         childAspectRatio: 0.68,
       ),
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return _AnimatedProductCard(
-            product: products[index],
-            index: index,
-            onAddToCart: () => _addToCart(products[index]),
-          );
-        },
-        childCount: products.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return _AnimatedProductCard(
+          product: products[index],
+          index: index,
+          onAddToCart: () => _addToCart(products[index]),
+        );
+      }, childCount: products.length),
     );
   }
 
@@ -464,10 +462,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
           child: Shimmer.fromColors(
             baseColor: AppColors.neutral200,
             highlightColor: AppColors.neutral100,
-            child: Container(
-              height: 280.h,
-              color: AppColors.white,
-            ),
+            child: Container(height: 280.h, color: AppColors.white),
           ),
         ),
         SliverToBoxAdapter(child: SizedBox(height: 24.h)),
@@ -524,17 +519,14 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: AppColors.neutral600,
-              ),
+              style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
             ),
             SizedBox(height: 24.h),
             ElevatedButton.icon(
               onPressed: () {
-                context
-                    .read<StorefrontCubit>()
-                    .loadProductsForVendor(widget.vendorId);
+                context.read<StorefrontCubit>().loadProductsForVendor(
+                  widget.vendorId,
+                );
               },
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('Retry'),
@@ -582,7 +574,10 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                       color: AppColors.danger,
                       shape: BoxShape.circle,
                     ),
-                    constraints: BoxConstraints(minWidth: 16.w, minHeight: 16.h),
+                    constraints: BoxConstraints(
+                      minWidth: 16.w,
+                      minHeight: 16.h,
+                    ),
                     child: Text(
                       '$count',
                       style: TextStyle(
@@ -604,12 +599,14 @@ class _StorefrontScreenState extends State<StorefrontScreen>
 
   void _addToCart(ProductModel product) {
     final cartCubit = getIt<CartCubit>();
-    cartCubit.addItem(CartItem(
-      productId: product.id,
-      vendorId: product.vendorId,
-      qty: 1,
-      unitPrice: product.price,
-    ));
+    cartCubit.addItem(
+      CartItem(
+        productId: product.id,
+        vendorId: product.vendorId,
+        qty: 1,
+        unitPrice: product.price,
+      ),
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -664,12 +661,14 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     Future.delayed(Duration(milliseconds: widget.index * 100), () {
       if (mounted) _controller.forward();
@@ -687,9 +686,9 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
     final hasDiscount = widget.product.compareAtPrice != null;
     final discountPercent = hasDiscount
         ? (((widget.product.compareAtPrice! - widget.product.price) /
-                    widget.product.compareAtPrice!) *
-                100)
-            .round()
+                      widget.product.compareAtPrice!) *
+                  100)
+              .round()
         : 0;
 
     return FadeTransition(
@@ -709,7 +708,7 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.neutral300.withOpacity(0.5),
+                  color: AppColors.neutral300.withValues(alpha: 0.5),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -772,14 +771,16 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.9),
+                            color: AppColors.white.withValues(alpha: 0.9),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             _isFavorite
                                 ? Icons.favorite_rounded
                                 : Icons.favorite_border_rounded,
-                            color: _isFavorite ? AppColors.danger : AppColors.neutral600,
+                            color: _isFavorite
+                                ? AppColors.danger
+                                : AppColors.neutral600,
                             size: 20.sp,
                           ),
                         ),
@@ -787,25 +788,35 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                     ),
                   ],
                 ),
-                // Product Info
-                Expanded(
+                // Product Info (conservative layout to avoid overflow)
+                Flexible(
+                  fit: FlexFit.loose,
                   child: Padding(
-                    padding: EdgeInsets.all(12.r),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.r,
+                      vertical: 8.h,
+                    ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.product.title,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.neutral900,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxHeight: 24.h),
+                          child: Text(
+                            widget.product.title,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.neutral900,
+                              height: 1.0,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                        const Spacer(),
-                        if (hasDiscount) ...[
+                        SizedBox(height: 4.h),
+                        if (hasDiscount)
                           Text(
                             CurrencyFormatter.formatIraqiDinar(
                               widget.product.compareAtPrice!,
@@ -813,48 +824,57 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: AppColors.neutral600,
+                              height: 1.0,
                               decoration: TextDecoration.lineThrough,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 4.h),
-                        ],
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
+                            Flexible(
+                              fit: FlexFit.loose,
                               child: Text(
                                 CurrencyFormatter.formatIraqiDinar(
                                   widget.product.price,
                                 ),
                                 style: TextStyle(
-                                  fontSize: 16.sp,
+                                  fontSize: 13.sp,
+                                  height: 1.0,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            // Add to Cart Button
                             GestureDetector(
                               onTap: widget.onAddToCart,
                               child: Container(
-                                padding: EdgeInsets.all(8.r),
+                                padding: EdgeInsets.all(4.r),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [AppColors.primary, AppColors.accent],
+                                    colors: [
+                                      AppColors.primary,
+                                      AppColors.accent,
+                                    ],
                                   ),
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderRadius: BorderRadius.circular(10.r),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.primary.withOpacity(0.4),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.35,
+                                      ),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
                                     ),
                                   ],
                                 ),
                                 child: Icon(
                                   Icons.add_shopping_cart_rounded,
                                   color: AppColors.white,
-                                  size: 18.sp,
+                                  size: 14.sp,
                                 ),
                               ),
                             ),

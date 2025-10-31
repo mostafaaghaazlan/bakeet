@@ -14,11 +14,96 @@ import 'package:shimmer/shimmer.dart';
 class ProductDetailScreen extends StatefulWidget {
   final String productId;
 
-  const ProductDetailScreen({Key? key, required this.productId})
-      : super(key: key);
+  const ProductDetailScreen({super.key, required this.productId});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class FullScreenImageViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const FullScreenImageViewer({
+    super.key,
+    required this.images,
+    this.initialIndex = 0,
+  });
+
+  @override
+  State<FullScreenImageViewer> createState() => _FullScreenImageViewerState();
+}
+
+class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex.clamp(0, widget.images.length - 1);
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: widget.images.length,
+              onPageChanged: (index) => setState(() => _currentIndex = index),
+              itemBuilder: (context, index) {
+                final imageUrl = widget.images[index];
+                return InteractiveViewer(
+                  panEnabled: true,
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  child: Center(
+                    child: CachedImage(imageUrl: imageUrl, fit: BoxFit.contain),
+                  ),
+                );
+              },
+            ),
+            // Top bar with close button
+            Positioned(
+              top: 12.h,
+              left: 12.w,
+              child: IconButton(
+                icon: Icon(Icons.close, color: Colors.white, size: 28.sp),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            // Image index indicator
+            Positioned(
+              top: 12.h,
+              right: 20.w,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  '${_currentIndex + 1}/${widget.images.length}',
+                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen>
@@ -44,12 +129,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
 
     _loadProduct();
   }
@@ -57,7 +140,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   Future<void> _loadProduct() async {
     final product = await _repository.getProductById(widget.productId);
     setState(() {
-      _product = product as ProductModel?;
+      _product = product;
       _loading = false;
     });
     _animationController.forward();
@@ -88,7 +171,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       actions: [
         IconButton(
           icon: Icon(
-            _isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            _isFavorite
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
             color: _isFavorite ? AppColors.danger : AppColors.neutral900,
           ),
           onPressed: () {
@@ -113,10 +198,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           Shimmer.fromColors(
             baseColor: AppColors.neutral200,
             highlightColor: AppColors.neutral100,
-            child: Container(
-              height: 400.h,
-              color: AppColors.white,
-            ),
+            child: Container(height: 400.h, color: AppColors.white),
           ),
           SizedBox(height: 20.h),
           Padding(
@@ -174,9 +256,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     final hasDiscount = _product!.compareAtPrice != null;
     final discountPercent = hasDiscount
         ? (((_product!.compareAtPrice! - _product!.price) /
-                    _product!.compareAtPrice!) *
-                100)
-            .round()
+                      _product!.compareAtPrice!) *
+                  100)
+              .round()
         : 0;
 
     return FadeTransition(
@@ -244,7 +326,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
                         );
                       }).toList(),
                     ),
@@ -270,7 +355,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               SizedBox(height: 4.h),
                             ],
                             Text(
-                              CurrencyFormatter.formatIraqiDinar(_product!.price),
+                              CurrencyFormatter.formatIraqiDinar(
+                                _product!.price,
+                              ),
                               style: TextStyle(
                                 fontSize: 32.sp,
                                 fontWeight: FontWeight.bold,
@@ -357,7 +444,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   Widget _buildImageGallery() {
-    final images = _product!.images.isNotEmpty
+    final images = (_product?.images.isNotEmpty ?? false)
         ? _product!.images
         : ['https://via.placeholder.com/400'];
 
@@ -372,13 +459,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             },
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () {
-                  // TODO: Open full-screen image viewer
-                },
-                child: CachedImage(
-                  imageUrl: images[index],
-                  fit: BoxFit.cover,
-                ),
+                onTap: () => _openFullScreenImageViewer(index),
+                child: CachedImage(imageUrl: images[index], fit: BoxFit.cover),
               );
             },
           ),
@@ -411,6 +493,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           ),
         ],
       ],
+    );
+  }
+
+  void _openFullScreenImageViewer(int index) {
+    final images = (_product?.images.isNotEmpty ?? false)
+        ? _product!.images
+        : ['https://via.placeholder.com/400'];
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            FullScreenImageViewer(images: images, initialIndex: index),
+      ),
     );
   }
 
@@ -463,7 +559,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -495,14 +591,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             ),
             child: Row(
               children: [
-                _buildQuantityButton(
-                  Icons.remove_rounded,
-                  () {
-                    if (_quantity > 1) {
-                      setState(() => _quantity--);
-                    }
-                  },
-                ),
+                _buildQuantityButton(Icons.remove_rounded, () {
+                  if (_quantity > 1) {
+                    setState(() => _quantity--);
+                  }
+                }),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Text(
@@ -514,12 +607,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     ),
                   ),
                 ),
-                _buildQuantityButton(
-                  Icons.add_rounded,
-                  () {
-                    setState(() => _quantity++);
-                  },
-                ),
+                _buildQuantityButton(Icons.add_rounded, () {
+                  setState(() => _quantity++);
+                }),
               ],
             ),
           ),
@@ -534,11 +624,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
         padding: EdgeInsets.all(12.r),
-        child: Icon(
-          icon,
-          color: AppColors.primary,
-          size: 20.sp,
-        ),
+        child: Icon(icon, color: AppColors.primary, size: 20.sp),
       ),
     );
   }
@@ -552,7 +638,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.5),
+            color: AppColors.neutral300.withValues(alpha: 0.5),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -622,12 +708,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   void _addToCart() {
     final cartCubit = getIt<CartCubit>();
-    cartCubit.addItem(CartItem(
-      productId: _product!.id,
-      vendorId: _product!.vendorId,
-      qty: _quantity,
-      unitPrice: _product!.price,
-    ));
+    cartCubit.addItem(
+      CartItem(
+        productId: _product!.id,
+        vendorId: _product!.vendorId,
+        qty: _quantity,
+        unitPrice: _product!.price,
+      ),
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

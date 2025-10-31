@@ -8,7 +8,7 @@ import 'package:bakeet/features/marketplace/screen/success_screen.dart';
 
 /// A stunning checkout screen with modern form design and beautiful sections
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({Key? key}) : super(key: key);
+  const CheckoutScreen({super.key});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -73,10 +73,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       foregroundColor: AppColors.neutral900,
       title: Text(
         'Checkout',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20.sp,
-        ),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
       ),
     );
   }
@@ -97,7 +94,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildProgressStep(int number, String label, bool isActive, bool isCompleted) {
+  Widget _buildProgressStep(
+    int number,
+    String label,
+    bool isActive,
+    bool isCompleted,
+  ) {
     return Column(
       children: [
         Container(
@@ -107,8 +109,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             color: isCompleted
                 ? AppColors.success
                 : isActive
-                    ? AppColors.primary
-                    : AppColors.neutral200,
+                ? AppColors.primary
+                : AppColors.neutral200,
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -156,7 +158,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.3),
+            color: AppColors.neutral300.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -249,10 +251,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               },
               title: Text(
                 'Save this address for future orders',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.neutral700,
-                ),
+                style: TextStyle(fontSize: 14.sp, color: AppColors.neutral700),
               ),
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
@@ -292,10 +291,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(
-              color: AppColors.neutral400,
-              fontSize: 14.sp,
-            ),
+            hintStyle: TextStyle(color: AppColors.neutral400, fontSize: 14.sp),
             prefixIcon: Icon(icon, color: AppColors.primary, size: 22.sp),
             filled: true,
             fillColor: AppColors.neutral50,
@@ -338,7 +334,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.3),
+            color: AppColors.neutral300.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -502,7 +498,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.3),
+            color: AppColors.neutral300.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -583,7 +579,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.5),
+            color: AppColors.neutral300.withValues(alpha: 0.5),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -688,9 +684,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => SuccessScreen(orderId: orderId),
-      ),
+      MaterialPageRoute(builder: (_) => SuccessScreen(orderId: orderId)),
     );
   }
 }

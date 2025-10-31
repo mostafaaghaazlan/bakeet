@@ -7,7 +7,7 @@ import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 class SuccessScreen extends StatefulWidget {
   final String orderId;
 
-  const SuccessScreen({Key? key, required this.orderId}) : super(key: key);
+  const SuccessScreen({super.key, required this.orderId});
 
   @override
   State<SuccessScreen> createState() => _SuccessScreenState();
@@ -163,7 +163,7 @@ class _SuccessScreenState extends State<SuccessScreen>
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.success.withOpacity(0.4),
+              color: AppColors.success.withValues(alpha: 0.4),
               blurRadius: 30,
               offset: const Offset(0, 10),
             ),
@@ -194,8 +194,9 @@ class _SuccessScreenState extends State<SuccessScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.success
-                            .withOpacity(1 - _scaleController.value),
+                        color: AppColors.success.withValues(
+                          alpha: 1 - _scaleController.value,
+                        ),
                         width: 3,
                       ),
                     ),
@@ -219,7 +220,7 @@ class _SuccessScreenState extends State<SuccessScreen>
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.neutral300.withOpacity(0.3),
+              color: AppColors.neutral300.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -315,10 +316,7 @@ class _SuccessScreenState extends State<SuccessScreen>
         Expanded(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.neutral600,
-            ),
+            style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
           ),
         ),
         Text(
@@ -344,7 +342,7 @@ class _SuccessScreenState extends State<SuccessScreen>
             end: Alignment.bottomRight,
             colors: [
               AppColors.primary25,
-              AppColors.accent.withOpacity(0.1),
+              AppColors.accent.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(20.r),
@@ -377,17 +375,9 @@ class _SuccessScreenState extends State<SuccessScreen>
               'Check your email for order details',
             ),
             SizedBox(height: 12.h),
-            _buildNextStep(
-              2,
-              'Processing',
-              'We will prepare your order',
-            ),
+            _buildNextStep(2, 'Processing', 'We will prepare your order'),
             SizedBox(height: 12.h),
-            _buildNextStep(
-              3,
-              'Delivery',
-              'Your order will be delivered soon',
-            ),
+            _buildNextStep(3, 'Delivery', 'Your order will be delivered soon'),
           ],
         ),
       ),
@@ -432,10 +422,7 @@ class _SuccessScreenState extends State<SuccessScreen>
               SizedBox(height: 4.h),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: AppColors.neutral600,
-                ),
+                style: TextStyle(fontSize: 13.sp, color: AppColors.neutral600),
               ),
             ],
           ),
@@ -602,7 +589,7 @@ class ConfettiPainter extends CustomPainter {
       final pieceSize = 5.0 + random.nextDouble() * 8;
 
       final paint = Paint()
-        ..color = color.withOpacity(1 - progress * 0.5)
+        ..color = color.withValues(alpha: 1 - progress * 0.5)
         ..style = PaintingStyle.fill;
 
       canvas.save();

@@ -25,8 +25,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final MarketplaceRepository _repo;
   late final ScrollController _scrollController;
   late final AnimationController _fadeController;
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen>
     'Home',
     'Clothing',
     'Decor',
-    'Crafts'
+    'Crafts',
   ];
   String _selectedCategory = 'All';
 
@@ -132,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen>
           colors: [
             AppColors.primary25,
             AppColors.appWhite,
-            AppColors.primary50.withOpacity(0.3),
+            AppColors.primary50.withValues(alpha: 0.3),
           ],
           stops: const [0.0, 0.5, 1.0],
         ),
@@ -153,13 +152,17 @@ class _HomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Icon(Icons.storefront_rounded, color: AppColors.white, size: 24.sp),
+            child: Icon(
+              Icons.storefront_rounded,
+              color: AppColors.white,
+              size: 24.sp,
+            ),
           ),
           SizedBox(width: 12.w),
           Text(
@@ -199,7 +202,10 @@ class _HomeScreenState extends State<HomeScreen>
                       color: AppColors.danger,
                       shape: BoxShape.circle,
                     ),
-                    constraints: BoxConstraints(minWidth: 16.w, minHeight: 16.h),
+                    constraints: BoxConstraints(
+                      minWidth: 16.w,
+                      minHeight: 16.h,
+                    ),
                     child: Text(
                       '$count',
                       style: TextStyle(
@@ -324,11 +330,13 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 elevation: isSelected ? 4 : 0,
-                shadowColor: AppColors.primary.withOpacity(0.4),
+                shadowColor: AppColors.primary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.r),
                   side: BorderSide(
-                    color: isSelected ? AppColors.primary : AppColors.neutral300,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.neutral300,
                     width: isSelected ? 0 : 1,
                   ),
                 ),
@@ -349,7 +357,10 @@ class _HomeScreenState extends State<HomeScreen>
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [AppColors.danger, AppColors.warning],
@@ -545,8 +556,8 @@ class _HomeScreenState extends State<HomeScreen>
                 final filteredProducts = _selectedCategory == 'All'
                     ? products
                     : products
-                        .where((p) => p.category == _selectedCategory)
-                        .toList();
+                          .where((p) => p.category == _selectedCategory)
+                          .toList();
 
                 if (filteredProducts.isEmpty) {
                   return Padding(
@@ -639,7 +650,7 @@ class _HomeScreenState extends State<HomeScreen>
         child: Material(
           elevation: 8,
           borderRadius: BorderRadius.circular(28.r),
-          shadowColor: AppColors.primary.withOpacity(0.3),
+          shadowColor: AppColors.primary.withValues(alpha: 0.3),
           child: TextField(
             decoration: InputDecoration(
               hintText: 'Search products, vendors...',
@@ -654,7 +665,10 @@ class _HomeScreenState extends State<HomeScreen>
                 borderRadius: BorderRadius.circular(28.r),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: 16.h,
+              ),
             ),
           ),
         ),
@@ -757,7 +771,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
                       borderRadius: BorderRadius.circular(24.r),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.2),
+                          color: AppColors.primary.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -779,7 +793,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  AppColors.black.withOpacity(0.4),
+                                  AppColors.black.withValues(alpha: 0.4),
                                 ],
                               ),
                             ),
@@ -810,9 +824,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
                         colors: [AppColors.primary, AppColors.accent],
                       )
                     : null,
-                color: _currentPage == index
-                    ? null
-                    : AppColors.neutral300,
+                color: _currentPage == index ? null : AppColors.neutral300,
                 borderRadius: BorderRadius.circular(4.r),
               ),
             ),
@@ -828,10 +840,7 @@ class _ModernVendorCard extends StatelessWidget {
   final VendorModel vendor;
   final int index;
 
-  const _ModernVendorCard({
-    required this.vendor,
-    required this.index,
-  });
+  const _ModernVendorCard({required this.vendor, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -846,10 +855,8 @@ class _ModernVendorCard extends StatelessWidget {
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => StorefrontScreen(
-            vendorId: vendor.id,
-            vendorName: vendor.name,
-          ),
+          builder: (_) =>
+              StorefrontScreen(vendorId: vendor.id, vendorName: vendor.name),
         ),
       ),
       child: Container(
@@ -863,7 +870,7 @@ class _ModernVendorCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: gradient[0].withOpacity(0.4),
+              color: gradient[0].withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -879,7 +886,7 @@ class _ModernVendorCard extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.white.withOpacity(0.1),
+                  color: AppColors.white.withValues(alpha: 0.1),
                 ),
               ),
             ),
@@ -895,7 +902,7 @@ class _ModernVendorCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.black.withOpacity(0.1),
+                          color: AppColors.black.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -920,17 +927,17 @@ class _ModernVendorCard extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.2),
+                      color: AppColors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Text(
                       vendor.tagline,
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 12.sp,
-                      ),
+                      style: TextStyle(color: AppColors.white, fontSize: 12.sp),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -971,10 +978,7 @@ class _StaggeredProductCard extends StatefulWidget {
   final ProductModel product;
   final int index;
 
-  const _StaggeredProductCard({
-    required this.product,
-    required this.index,
-  });
+  const _StaggeredProductCard({required this.product, required this.index});
 
   @override
   State<_StaggeredProductCard> createState() => _StaggeredProductCardState();
@@ -993,12 +997,14 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     Future.delayed(Duration(milliseconds: widget.index * 100), () {
       if (mounted) _controller.forward();
@@ -1016,9 +1022,9 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
     final hasDiscount = widget.product.compareAtPrice != null;
     final discountPercent = hasDiscount
         ? (((widget.product.compareAtPrice! - widget.product.price) /
-                    widget.product.compareAtPrice!) *
-                100)
-            .round()
+                      widget.product.compareAtPrice!) *
+                  100)
+              .round()
         : 0;
 
     return FadeTransition(
@@ -1038,7 +1044,7 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.neutral300.withOpacity(0.5),
+                  color: AppColors.neutral300.withValues(alpha: 0.5),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -1094,7 +1100,7 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
                       child: Container(
                         padding: EdgeInsets.all(8.r),
                         decoration: BoxDecoration(
-                          color: AppColors.white.withOpacity(0.9),
+                          color: AppColors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -1137,7 +1143,9 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
                           SizedBox(height: 4.h),
                         ],
                         Text(
-                          CurrencyFormatter.formatIraqiDinar(widget.product.price),
+                          CurrencyFormatter.formatIraqiDinar(
+                            widget.product.price,
+                          ),
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
@@ -1173,13 +1181,13 @@ class _FlashDealCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.danger.withOpacity(0.9),
-            AppColors.warning.withOpacity(0.9),
+            AppColors.danger.withValues(alpha: 0.9),
+            AppColors.warning.withValues(alpha: 0.9),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.danger.withOpacity(0.4),
+            color: AppColors.danger.withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -1193,7 +1201,7 @@ class _FlashDealCard extends StatelessWidget {
             child: Icon(
               Icons.flash_on,
               size: 100.sp,
-              color: AppColors.white.withOpacity(0.1),
+              color: AppColors.white.withValues(alpha: 0.1),
             ),
           ),
           Padding(
@@ -1204,7 +1212,7 @@ class _FlashDealCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: AppColors.white.withOpacity(0.3),
+                    color: AppColors.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
