@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 
@@ -12,6 +13,9 @@ class MarketplaceRepository {
       bannerUrl:
           'https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&h=400&fit=crop',
       tagline: 'Handmade & traditional',
+      primaryColor: const Color(0xFFD97757), // Warm terracotta
+      secondaryColor: const Color(0xFFC95D3F), // Darker terracotta
+      accentColor: const Color(0xFFE89B80), // Light terracotta
     ),
     VendorModel(
       id: 'v2',
@@ -21,6 +25,9 @@ class MarketplaceRepository {
       bannerUrl:
           'https://images.unsplash.com/photo-1505691723518-36a3d1d28e4a?w=1200&h=400&fit=crop',
       tagline: 'Modern design & furniture',
+      primaryColor: const Color(0xFF6366F1), // Modern indigo
+      secondaryColor: const Color(0xFF4F46E5), // Deep indigo
+      accentColor: const Color(0xFF818CF8), // Light indigo
     ),
     VendorModel(
       id: 'v3',
@@ -30,6 +37,9 @@ class MarketplaceRepository {
       bannerUrl:
           'https://images.unsplash.com/photo-1493666438817-866a91353ca9?w=1200&h=400&fit=crop',
       tagline: 'Local home essentials',
+      primaryColor: const Color(0xFF10B981), // Fresh green
+      secondaryColor: const Color(0xFF059669), // Emerald green
+      accentColor: const Color(0xFF34D399), // Light green
     ),
   ];
 

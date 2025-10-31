@@ -6,6 +6,7 @@ import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
 import 'package:bakeet/features/marketplace/data/repository/marketplace_repository.dart';
 import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
+import 'package:bakeet/features/marketplace/data/model/vendor_theme.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
@@ -69,56 +70,89 @@ class _StorefrontScreenState extends State<StorefrontScreen>
       create: (_) =>
           StorefrontCubit(MarketplaceRepository())
             ..loadProductsForVendor(widget.vendorId),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: AppColors.appWhite,
-        appBar: _buildAppBar(context),
-        body: BlocBuilder<StorefrontCubit, StorefrontState>(
-          builder: (context, state) {
-            if (state is StorefrontLoading) {
-              return _buildLoadingState();
-            }
+      child: BlocBuilder<StorefrontCubit, StorefrontState>(
+        builder: (context, storefrontState) {
+          VendorTheme? currentTheme;
 
-            if (state is StorefrontLoaded) {
-              final products = state.products.cast<ProductModel>();
-              final repository = MarketplaceRepository();
+          if (storefrontState is StorefrontLoaded) {
+            final repository = MarketplaceRepository();
+            // We'll use FutureBuilder to get the theme for FAB
+            return FutureBuilder<VendorModel?>(
+              future: _getVendor(repository),
+              builder: (context, vendorSnapshot) {
+                if (vendorSnapshot.hasData) {
+                  currentTheme = VendorTheme.fromVendor(vendorSnapshot.data!);
+                }
 
-              return FutureBuilder<VendorModel?>(
-                future: _getVendor(repository),
-                builder: (context, snapshot) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      if (snapshot.hasData) _buildVendorHeader(snapshot.data!),
-                      SliverToBoxAdapter(child: SizedBox(height: 24.h)),
-                      _buildCategoryFilters(),
-                      SliverToBoxAdapter(child: SizedBox(height: 16.h)),
-                      _buildProductsHeader(products.length),
-                      SliverPadding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        sliver: _buildProductsGrid(products),
-                      ),
-                      SliverToBoxAdapter(child: SizedBox(height: 100.h)),
-                    ],
-                  );
-                },
-              );
-            }
+                return Scaffold(
+                  extendBodyBehindAppBar: true,
+                  backgroundColor: AppColors.appWhite,
+                  appBar: _buildAppBar(context),
+                  body: _buildBody(storefrontState),
+                  floatingActionButton: _buildCartFAB(currentTheme),
+                );
+              },
+            );
+          }
 
-            if (state is StorefrontError) {
-              return _buildErrorState(state.message);
-            }
-
-            return const SizedBox.shrink();
-          },
-        ),
-        floatingActionButton: _buildCartFAB(),
+          return Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: AppColors.appWhite,
+            appBar: _buildAppBar(context),
+            body: _buildBody(storefrontState),
+            floatingActionButton: _buildCartFAB(null),
+          );
+        },
       ),
     );
+  }
+
+  Widget _buildBody(StorefrontState state) {
+    if (state is StorefrontLoading) {
+      return _buildLoadingState();
+    }
+
+    if (state is StorefrontLoaded) {
+      final products = state.products.cast<ProductModel>();
+      final repository = MarketplaceRepository();
+
+      return FutureBuilder<VendorModel?>(
+        future: _getVendor(repository),
+        builder: (context, snapshot) {
+          final vendorTheme = snapshot.hasData
+              ? VendorTheme.fromVendor(snapshot.data!)
+              : null;
+
+          return CustomScrollView(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              if (snapshot.hasData) _buildVendorHeader(snapshot.data!, vendorTheme!),
+              SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+              if (vendorTheme != null) _buildCategoryFilters(vendorTheme),
+              SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+              _buildProductsHeader(products.length),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 8.h,
+                ),
+                sliver: vendorTheme != null
+                    ? _buildProductsGrid(products, vendorTheme)
+                    : _buildProductsGrid(products, null),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 100.h)),
+            ],
+          );
+        },
+      );
+    }
+
+    if (state is StorefrontError) {
+      return _buildErrorState(state.message);
+    }
+
+    return const SizedBox.shrink();
   }
 
   Future<VendorModel?> _getVendor(MarketplaceRepository repository) async {
@@ -161,7 +195,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     );
   }
 
-  Widget _buildVendorHeader(VendorModel vendor) {
+  Widget _buildVendorHeader(VendorModel vendor, VendorTheme theme) {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
@@ -274,12 +308,12 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                           _buildInfoChip(
                             Icons.inventory_2_outlined,
                             '120+ Products',
-                            AppColors.primary,
+                            theme.primaryColor,
                           ),
                           _buildInfoChip(
                             Icons.local_shipping_outlined,
                             'Fast',
-                            AppColors.success,
+                            theme.accentColor,
                           ),
                         ],
                       ),
@@ -323,7 +357,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     );
   }
 
-  Widget _buildCategoryFilters() {
+  Widget _buildCategoryFilters(VendorTheme theme) {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 45.h,
@@ -344,7 +378,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                   setState(() => _selectedCategory = category);
                 },
                 backgroundColor: AppColors.white,
-                selectedColor: AppColors.primary,
+                selectedColor: theme.primaryColor,
                 labelStyle: TextStyle(
                   color: isSelected ? AppColors.white : AppColors.neutral700,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
@@ -352,12 +386,12 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                 elevation: isSelected ? 4 : 1,
-                shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                shadowColor: theme.shadowColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.r),
                   side: BorderSide(
                     color: isSelected
-                        ? AppColors.primary
+                        ? theme.primaryColor
                         : AppColors.neutral300,
                     width: isSelected ? 0 : 1,
                   ),
@@ -409,7 +443,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     );
   }
 
-  Widget _buildProductsGrid(List<ProductModel> products) {
+  Widget _buildProductsGrid(List<ProductModel> products, VendorTheme? theme) {
     if (products.isEmpty) {
       return SliverToBoxAdapter(
         child: Center(
@@ -450,6 +484,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
           product: products[index],
           index: index,
           onAddToCart: () => _addToCart(products[index]),
+          theme: theme,
         );
       }, childCount: products.length),
     );
@@ -545,7 +580,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     );
   }
 
-  Widget _buildCartFAB() {
+  Widget _buildCartFAB(VendorTheme? theme) {
     return BlocBuilder<CartCubit, CartState>(
       bloc: getIt<CartCubit>(),
       builder: (context, state) {
@@ -558,7 +593,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
               MaterialPageRoute(builder: (_) => const CartScreen()),
             );
           },
-          backgroundColor: AppColors.primary,
+          backgroundColor: theme?.primaryColor ?? AppColors.primary,
           foregroundColor: AppColors.white,
           elevation: 8,
           icon: Stack(
@@ -636,11 +671,13 @@ class _AnimatedProductCard extends StatefulWidget {
   final ProductModel product;
   final int index;
   final VoidCallback onAddToCart;
+  final VendorTheme? theme;
 
   const _AnimatedProductCard({
     required this.product,
     required this.index,
     required this.onAddToCart,
+    this.theme,
   });
 
   @override
@@ -843,7 +880,7 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                                   fontSize: 13.sp,
                                   height: 1.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                  color: widget.theme?.primaryColor ?? AppColors.primary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -854,7 +891,7 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                               child: Container(
                                 padding: EdgeInsets.all(4.r),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient: widget.theme?.primaryGradient ?? const LinearGradient(
                                     colors: [
                                       AppColors.primary,
                                       AppColors.accent,
@@ -863,9 +900,9 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                                   borderRadius: BorderRadius.circular(10.r),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.primary.withValues(
+                                      color: (widget.theme?.shadowColor ?? AppColors.primary.withValues(
                                         alpha: 0.35,
-                                      ),
+                                      )),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
