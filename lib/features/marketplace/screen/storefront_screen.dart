@@ -8,6 +8,7 @@ import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_theme.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
+import 'package:bakeet/features/marketplace/widgets/vendor_banner_carousel.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 import 'package:bakeet/core/di/injection.dart';
@@ -129,6 +130,33 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             slivers: [
               if (snapshot.hasData && vendorTheme != null)
                 _buildVendorHeader(snapshot.data!, vendorTheme),
+              // Banner carousel placed below vendor info and above categories
+              if (snapshot.hasData && vendorTheme != null)
+                SliverToBoxAdapter(child: SizedBox(height: 12.h)),
+              if (snapshot.hasData && vendorTheme != null)
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 200.h,
+                    child: Builder(
+                      builder: (context) {
+                        final vendor = snapshot.data!;
+                        final banners = <String>[];
+                        if (vendor.bannerUrl.isNotEmpty)
+                          banners.add(vendor.bannerUrl);
+                        if (vendorTheme.backgroundImageUrl != null &&
+                            vendorTheme.backgroundImageUrl!.isNotEmpty) {
+                          banners.add(vendorTheme.backgroundImageUrl!);
+                        }
+
+                        if (banners.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return VendorBannerCarousel(banners: banners);
+                      },
+                    ),
+                  ),
+                ),
               SliverToBoxAdapter(child: SizedBox(height: 24.h)),
               if (vendorTheme != null) _buildCategoryFilters(vendorTheme),
               SliverToBoxAdapter(child: SizedBox(height: 16.h)),
@@ -199,15 +227,10 @@ class _StorefrontScreenState extends State<StorefrontScreen>
         decoration: theme.backgroundDecoration,
         child: Stack(
           children: [
-            // Fallback banner behind the decoration when vendor has none
-            if (theme.backgroundImageUrl == null ||
-                theme.backgroundImageUrl!.isEmpty)
-              Positioned.fill(
-                child: CachedImage(
-                  imageUrl: vendor.bannerUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
+            // Background decoration is provided by theme.backgroundDecoration
+            // (applied on the container). The banner carousel is displayed
+            // below the vendor info as a separate sliver so it doesn't
+            // overlap the vendor details.
 
             // Vendor Info
             Positioned(
