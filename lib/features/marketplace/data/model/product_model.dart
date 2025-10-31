@@ -8,6 +8,7 @@ class ProductModel {
   final String shortDescription;
   final List<String> tags;
   final String category;
+  final String description;
 
   ProductModel({
     required this.id,
@@ -19,6 +20,7 @@ class ProductModel {
     required this.shortDescription,
     required this.tags,
     required this.category,
+    required this.description,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -37,6 +39,7 @@ class ProductModel {
         (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
         [],
     category: json['category'] ?? '',
+    description: json['description'] ?? '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -49,5 +52,6 @@ class ProductModel {
     'shortDescription': shortDescription,
     'tags': tags,
     'category': category,
+    'description': description,
   };
 }

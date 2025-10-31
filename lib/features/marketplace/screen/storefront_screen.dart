@@ -134,10 +134,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
               SliverToBoxAdapter(child: SizedBox(height: 16.h)),
               _buildProductsHeader(products.length),
               SliverPadding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.w,
-                  vertical: 8.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                 sliver: _buildProductsGrid(products, vendorTheme),
               ),
               SliverToBoxAdapter(child: SizedBox(height: 100.h)),
@@ -196,133 +193,122 @@ class _StorefrontScreenState extends State<StorefrontScreen>
 
   Widget _buildVendorHeader(VendorModel vendor, VendorTheme theme) {
     return SliverToBoxAdapter(
-      child: Stack(
-        children: [
-          // Banner Image
-          SizedBox(
-            height: 280.h,
-            width: double.infinity,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CachedImage(imageUrl: vendor.bannerUrl, fit: BoxFit.cover),
-                // Gradient Overlay
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.3),
-                        Colors.black.withValues(alpha: 0.7),
+      child: Container(
+        height: 280.h,
+        width: double.infinity,
+        decoration: theme.backgroundDecoration,
+        child: Stack(
+          children: [
+            // Fallback banner behind the decoration when vendor has none
+            if (theme.backgroundImageUrl == null ||
+                theme.backgroundImageUrl!.isEmpty)
+              Positioned.fill(
+                child: CachedImage(
+                  imageUrl: vendor.bannerUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+            // Vendor Info
+            Positioned(
+              left: 20.w,
+              right: 20.w,
+              bottom: 20.h,
+              child: Row(
+                children: [
+                  // Logo
+                  Container(
+                    padding: EdgeInsets.all(4.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 40.r,
+                      backgroundImage: NetworkImage(vendor.logoUrl),
+                      backgroundColor: AppColors.white,
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  // Vendor Details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                vendor.name,
+                                style: theme.headlineTextStyle(24.sp),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(6.r),
+                              decoration: BoxDecoration(
+                                color: AppColors.success,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.verified_rounded,
+                                color: AppColors.white,
+                                size: 18.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          vendor.tagline,
+                          style: TextStyle(
+                            color:
+                                theme.textColor ??
+                                AppColors.white.withValues(alpha: 0.9),
+                            fontSize: 14.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 12.h),
+                        // Use Wrap so chips can flow to next line on narrow widths
+                        Wrap(
+                          spacing: 12.w,
+                          runSpacing: 8.h,
+                          children: [
+                            _buildInfoChip(
+                              Icons.star_rounded,
+                              '4.8',
+                              AppColors.yellow,
+                            ),
+                            _buildInfoChip(
+                              Icons.inventory_2_outlined,
+                              '120+ Products',
+                              theme.primaryColor,
+                            ),
+                            _buildInfoChip(
+                              Icons.local_shipping_outlined,
+                              'Fast',
+                              theme.accentColor,
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // Vendor Info
-          Positioned(
-            left: 20.w,
-            right: 20.w,
-            bottom: 20.h,
-            child: Row(
-              children: [
-                // Logo
-                Container(
-                  padding: EdgeInsets.all(4.r),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 40.r,
-                    backgroundImage: NetworkImage(vendor.logoUrl),
-                    backgroundColor: AppColors.white,
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                // Vendor Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              vendor.name,
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 24.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(6.r),
-                            decoration: BoxDecoration(
-                              color: AppColors.success,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.verified_rounded,
-                              color: AppColors.white,
-                              size: 18.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        vendor.tagline,
-                        style: TextStyle(
-                          color: AppColors.white.withValues(alpha: 0.9),
-                          fontSize: 14.sp,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 12.h),
-                      // Use Wrap so chips can flow to next line on narrow widths
-                      Wrap(
-                        spacing: 12.w,
-                        runSpacing: 8.h,
-                        children: [
-                          _buildInfoChip(
-                            Icons.star_rounded,
-                            '4.8',
-                            AppColors.yellow,
-                          ),
-                          _buildInfoChip(
-                            Icons.inventory_2_outlined,
-                            '120+ Products',
-                            theme.primaryColor,
-                          ),
-                          _buildInfoChip(
-                            Icons.local_shipping_outlined,
-                            'Fast',
-                            theme.accentColor,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -879,7 +865,9 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                                   fontSize: 13.sp,
                                   height: 1.0,
                                   fontWeight: FontWeight.bold,
-                                  color: widget.theme?.primaryColor ?? AppColors.primary,
+                                  color:
+                                      widget.theme?.primaryColor ??
+                                      AppColors.primary,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -890,18 +878,22 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                               child: Container(
                                 padding: EdgeInsets.all(4.r),
                                 decoration: BoxDecoration(
-                                  gradient: widget.theme?.primaryGradient ?? const LinearGradient(
-                                    colors: [
-                                      AppColors.primary,
-                                      AppColors.accent,
-                                    ],
-                                  ),
+                                  gradient:
+                                      widget.theme?.primaryGradient ??
+                                      const LinearGradient(
+                                        colors: [
+                                          AppColors.primary,
+                                          AppColors.accent,
+                                        ],
+                                      ),
                                   borderRadius: BorderRadius.circular(10.r),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: widget.theme?.shadowColor ?? AppColors.primary.withValues(
-                                        alpha: 0.35,
-                                      ),
+                                      color:
+                                          widget.theme?.shadowColor ??
+                                          AppColors.primary.withValues(
+                                            alpha: 0.35,
+                                          ),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     ),
