@@ -520,6 +520,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Trending Products',
@@ -592,7 +593,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16.h,
                     crossAxisSpacing: 16.w,
-                    childAspectRatio: 0.68,
+                    childAspectRatio: 0.6,
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
@@ -1112,42 +1113,44 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
                     ),
                   ],
                 ),
-                Expanded(
+                Flexible(
+                  fit: FlexFit.loose,
                   child: Padding(
                     padding: EdgeInsets.all(12.r),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           widget.product.title,
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                             color: AppColors.neutral900,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const Spacer(),
+                        SizedBox(height: 6.h),
                         if (hasDiscount) ...[
                           Text(
                             CurrencyFormatter.formatIraqiDinar(
                               widget.product.compareAtPrice!,
                             ),
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 10.sp,
                               color: AppColors.neutral600,
                               decoration: TextDecoration.lineThrough,
                             ),
                           ),
-                          SizedBox(height: 4.h),
+                          SizedBox(height: 2.h),
                         ],
                         Text(
                           CurrencyFormatter.formatIraqiDinar(
                             widget.product.price,
                           ),
                           style: TextStyle(
-                            fontSize: 16.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                           ),

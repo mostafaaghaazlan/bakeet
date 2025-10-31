@@ -6,6 +6,7 @@ import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 import 'package:bakeet/features/marketplace/cubit/vendors_cubit.dart';
 import 'package:bakeet/features/marketplace/data/repository/marketplace_repository.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
+import 'package:bakeet/features/marketplace/screen/vendor_gradient_widget.dart';
 import 'package:bakeet/features/marketplace/screen/storefront_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -489,14 +490,10 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
 
   @override
   Widget build(BuildContext context) {
-    final gradients = [
-      [AppColors.primary, AppColors.accent],
-      [AppColors.cardPurple, AppColors.cardRed],
-      [AppColors.cardGreen, AppColors.cardBlue],
-      [AppColors.cardOrange, AppColors.warning],
-    ];
-    final gradient = gradients[widget.index % gradients.length];
-
+    // If vendor provides gradientColors, prefer those for a unique look
+    final vendorGradientColors = widget.vendor.gradientColors != null
+        ? widget.vendor.gradientColors!.map((c) => Color(c)).toList()
+        : null;
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(
@@ -516,7 +513,12 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: gradient[0].withValues(alpha: 0.3),
+                  color:
+                      (vendorGradientColors != null &&
+                                  vendorGradientColors.isNotEmpty
+                              ? vendorGradientColors.first
+                              : AppColors.primary)
+                          .withValues(alpha: 0.3),
                   blurRadius: 16,
                   offset: const Offset(0, 8),
                 ),
@@ -526,28 +528,38 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
               borderRadius: BorderRadius.circular(20.r),
               child: Stack(
                 children: [
-                  // Banner Image
-                  Positioned.fill(
-                    child: CachedImage(
-                      imageUrl: widget.vendor.bannerUrl,
-                      fit: BoxFit.cover,
+                  // If the vendor provides a custom gradient, render it
+                  if (vendorGradientColors != null)
+                    Positioned.fill(
+                      child: AnimatedVendorGradient(
+                        colors: vendorGradientColors,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                    )
+                  else ...[
+                    // Banner Image
+                    Positioned.fill(
+                      child: CachedImage(
+                        imageUrl: widget.vendor.bannerUrl,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  // Gradient Overlay
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            AppColors.black.withValues(alpha: 0.7),
-                          ],
+                    // Gradient Overlay
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              AppColors.black.withValues(alpha: 0.7),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                   // Logo
                   Positioned(
                     top: 16.h,
