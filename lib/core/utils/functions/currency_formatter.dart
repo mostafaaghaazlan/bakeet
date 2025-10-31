@@ -13,4 +13,9 @@ class CurrencyFormatter {
       decimalDigits: decimalDigits,
     ).format(amount);
   }
+
+  static String formatIraqiDinar(double amount) {
+    final formatter = NumberFormat('#,###', 'en_US');
+    return '${formatter.format(amount.toInt())} د.ع';
+  }
 }
