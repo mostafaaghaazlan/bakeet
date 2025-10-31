@@ -1,3 +1,4 @@
+import 'package:bakeet/core/constant/app_size/app_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +13,7 @@ import 'checkout_screen.dart';
 
 /// A stunning cart screen with beautiful item cards and modern design
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -96,10 +97,7 @@ class _CartScreenState extends State<CartScreen>
           final count = cubit.items.length;
           return Text(
             'Shopping Cart${count > 0 ? ' ($count)' : ''}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.sp,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
           );
         },
       ),
@@ -112,9 +110,7 @@ class _CartScreenState extends State<CartScreen>
               onPressed: () => _showClearDialog(context, cubit),
               icon: const Icon(Icons.delete_outline_rounded),
               label: const Text('Clear'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.danger,
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             );
           },
         ),
@@ -155,10 +151,7 @@ class _CartScreenState extends State<CartScreen>
             Text(
               'Add items to get started',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: AppColors.neutral600,
-              ),
+              style: TextStyle(fontSize: 16.sp, color: AppColors.neutral600),
             ),
             SizedBox(height: 32.h),
             ElevatedButton.icon(
@@ -192,7 +185,7 @@ class _CartScreenState extends State<CartScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.neutral300.withOpacity(0.5),
+            color: AppColors.neutral300.withValues(alpha: 0.5),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -210,8 +203,12 @@ class _CartScreenState extends State<CartScreen>
               _buildPriceRow('Shipping', shipping, false),
               if (discount > 0) ...[
                 SizedBox(height: 12.h),
-                _buildPriceRow('Discount', -discount, false,
-                    color: AppColors.success),
+                _buildPriceRow(
+                  'Discount',
+                  -discount,
+                  false,
+                  color: AppColors.success,
+                ),
               ],
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -226,9 +223,7 @@ class _CartScreenState extends State<CartScreen>
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const CheckoutScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const CheckoutScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -263,8 +258,12 @@ class _CartScreenState extends State<CartScreen>
     );
   }
 
-  Widget _buildPriceRow(String label, double amount, bool isTotal,
-      {Color? color}) {
+  Widget _buildPriceRow(
+    String label,
+    double amount,
+    bool isTotal, {
+    Color? color,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -273,7 +272,9 @@ class _CartScreenState extends State<CartScreen>
           style: TextStyle(
             fontSize: isTotal ? 18.sp : 16.sp,
             fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-            color: color ?? (isTotal ? AppColors.neutral900 : AppColors.neutral600),
+            color:
+                color ??
+                (isTotal ? AppColors.neutral900 : AppColors.neutral600),
           ),
         ),
         Text(
@@ -281,15 +282,15 @@ class _CartScreenState extends State<CartScreen>
           style: TextStyle(
             fontSize: isTotal ? 22.sp : 16.sp,
             fontWeight: FontWeight.bold,
-            color: color ?? (isTotal ? AppColors.primary : AppColors.neutral900),
+            color:
+                color ?? (isTotal ? AppColors.primary : AppColors.neutral900),
           ),
         ),
       ],
     );
   }
 
-  void _showRemoveDialog(
-      BuildContext context, CartCubit cubit, CartItem item) {
+  void _showRemoveDialog(BuildContext context, CartCubit cubit, CartItem item) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -297,7 +298,9 @@ class _CartScreenState extends State<CartScreen>
           borderRadius: BorderRadius.circular(20.r),
         ),
         title: const Text('Remove Item'),
-        content: const Text('Are you sure you want to remove this item from your cart?'),
+        content: const Text(
+          'Are you sure you want to remove this item from your cart?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -337,7 +340,9 @@ class _CartScreenState extends State<CartScreen>
           borderRadius: BorderRadius.circular(20.r),
         ),
         title: const Text('Clear Cart'),
-        content: const Text('Are you sure you want to remove all items from your cart?'),
+        content: const Text(
+          'Are you sure you want to remove all items from your cart?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -404,12 +409,14 @@ class _CartItemCardState extends State<_CartItemCard>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _loadProduct();
 
@@ -419,9 +426,11 @@ class _CartItemCardState extends State<_CartItemCard>
   }
 
   Future<void> _loadProduct() async {
-    final product = await widget.repository.getProductById(widget.item.productId);
+    final product = await widget.repository.getProductById(
+      widget.item.productId,
+    );
     if (mounted) {
-      setState(() => _product = product as ProductModel?);
+      setState(() => _product = product);
     }
   }
 
@@ -443,7 +452,7 @@ class _CartItemCardState extends State<_CartItemCard>
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.neutral300.withOpacity(0.3),
+                color: AppColors.neutral300.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -574,8 +583,8 @@ class _CartItemCardState extends State<_CartItemCard>
                 ),
                 SizedBox(height: 12.h),
                 // Quantity Selector and Total
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  spacing: AppSize.size_10,
                   children: [
                     // Quantity Controls
                     Container(
@@ -590,14 +599,11 @@ class _CartItemCardState extends State<_CartItemCard>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _buildQuantityButton(
-                            Icons.remove_rounded,
-                            () {
-                              if (widget.item.qty > 1) {
-                                widget.onQuantityChanged(widget.item.qty - 1);
-                              }
-                            },
-                          ),
+                          _buildQuantityButton(Icons.remove_rounded, () {
+                            if (widget.item.qty > 1) {
+                              widget.onQuantityChanged(widget.item.qty - 1);
+                            }
+                          }),
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Text(
@@ -609,22 +615,25 @@ class _CartItemCardState extends State<_CartItemCard>
                               ),
                             ),
                           ),
-                          _buildQuantityButton(
-                            Icons.add_rounded,
-                            () {
-                              widget.onQuantityChanged(widget.item.qty + 1);
-                            },
-                          ),
+                          _buildQuantityButton(Icons.add_rounded, () {
+                            widget.onQuantityChanged(widget.item.qty + 1);
+                          }),
                         ],
                       ),
                     ),
-                    // Total Price
-                    Text(
-                      CurrencyFormatter.formatIraqiDinar(totalPrice),
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
+                    // Total Price (avoid Flexible inside unbounded Column)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        CurrencyFormatter.formatIraqiDinar(totalPrice),
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
                       ),
                     ),
                   ],
@@ -643,11 +652,7 @@ class _CartItemCardState extends State<_CartItemCard>
       borderRadius: BorderRadius.circular(12.r),
       child: Container(
         padding: EdgeInsets.all(8.r),
-        child: Icon(
-          icon,
-          color: AppColors.primary,
-          size: 18.sp,
-        ),
+        child: Icon(icon, color: AppColors.primary, size: 18.sp),
       ),
     );
   }
