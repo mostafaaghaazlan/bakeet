@@ -29,9 +29,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final MarketplaceRepository _repo;
   late final ScrollController _scrollController;
   late final AnimationController _fadeController;
-  late final Animation<double> _fadeAnimation;
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
+  // selected filter for searches
+  String _searchFilter = 'All';
 
   final List<String> _categories = [
     'All',
@@ -51,10 +52,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
     );
     _fadeController.forward();
 
@@ -101,8 +98,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(child: SizedBox(height: 100.h)),
-                  _buildWelcomeSection(),
-                  SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+
                   _buildBannerSection(),
                   SliverToBoxAdapter(child: SizedBox(height: 32.h)),
                   _buildCategoryChips(),
@@ -228,40 +224,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       elevation: 0,
       backgroundColor: Colors.transparent,
       foregroundColor: AppColors.black,
-    );
-  }
-
-  Widget _buildWelcomeSection() {
-    return SliverToBoxAdapter(
-      child: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome Back!',
-                style: TextStyle(
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.neutral900,
-                  height: 1.2,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Discover amazing products from local vendors',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: AppColors.neutral600,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -654,33 +616,193 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
-        child: Material(
-          elevation: 8,
-          borderRadius: BorderRadius.circular(28.r),
-          shadowColor: AppColors.primary.withValues(alpha: 0.3),
-          child: TextField(
-            controller: _searchController,
-            textInputAction: TextInputAction.search,
-            onSubmitted: (value) async {
-              if (value.trim().isEmpty) return;
-              await _performCombinedSearch(value.trim());
-            },
-            decoration: InputDecoration(
-              hintText: 'Search products, vendors...',
-              prefixIcon: const Icon(Icons.search, color: AppColors.primary),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.tune, color: AppColors.primary),
-                onPressed: () {},
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28.r),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.white.withValues(alpha: 0.95),
+                AppColors.white.withValues(alpha: 0.9),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.15),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+                spreadRadius: 0,
               ),
-              filled: true,
-              fillColor: AppColors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28.r),
-                borderSide: BorderSide.none,
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+                spreadRadius: 0,
               ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-                vertical: 16.h,
+            ],
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              width: 1,
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: TextField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              style: TextStyle(
+                fontSize: 15.sp,
+                color: AppColors.neutral900,
+                fontWeight: FontWeight.w500,
+              ),
+              onSubmitted: (value) async {
+                if (value.trim().isEmpty) return;
+                await _performCombinedSearch(
+                  value.trim(),
+                  initialFilter: _searchFilter,
+                );
+              },
+              onChanged: (value) {
+                // Optional: Add debounced search here
+              },
+              decoration: InputDecoration(
+                hintText: 'Search for products, vendors...',
+                hintStyle: TextStyle(
+                  fontSize: 15.sp,
+                  color: AppColors.neutral400,
+                  fontWeight: FontWeight.w400,
+                ),
+                prefixIcon: Container(
+                  margin: EdgeInsets.all(12.r),
+                  padding: EdgeInsets.all(8.r),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColors.primary, AppColors.accent],
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Icon(
+                    Icons.search_rounded,
+                    color: AppColors.white,
+                    size: 20.sp,
+                  ),
+                ),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_searchController.text.isNotEmpty)
+                      IconButton(
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: AppColors.neutral400,
+                          size: 20.sp,
+                        ),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {});
+                        },
+                      ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.tune_rounded,
+                        color: AppColors.primary,
+                        size: 20.sp,
+                      ),
+                      onPressed: () async {
+                        // show filter picker and apply
+                        final chosen = await showModalBottomSheet<String>(
+                          context: context,
+                          backgroundColor: AppColors.appWhite,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16.r),
+                            ),
+                          ),
+                          builder: (ctx) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.w,
+                                vertical: 16.h,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Filter results',
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: ['All', 'Products', 'Vendors']
+                                        .map((f) {
+                                          final selected = f == _searchFilter;
+                                          return ElevatedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(ctx, f),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: selected
+                                                  ? AppColors.primary
+                                                  : AppColors.neutral100,
+                                              foregroundColor: selected
+                                                  ? AppColors.white
+                                                  : AppColors.neutral700,
+                                              elevation: selected ? 4 : 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                              ),
+                                            ),
+                                            child: Text(f),
+                                          );
+                                        })
+                                        .toList(),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+
+                        if (chosen != null) {
+                          setState(() => _searchFilter = chosen);
+                          final q = _searchController.text.trim();
+                          await _performCombinedSearch(
+                            q,
+                            initialFilter: chosen,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                filled: true,
+                fillColor: Colors.transparent,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(28.r),
+                  borderSide: BorderSide(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 16.h,
+                ),
               ),
             ),
           ),
@@ -689,370 +811,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _performCombinedSearch(String query) async {
-    final q = query.toLowerCase();
-
-    final products = await _repo.getAllProducts();
-    final vendors = await _repo.getVendors();
-
-    final matchedProducts = products.where((p) {
-      final title = p.title.toLowerCase();
-      final desc = p.shortDescription.toLowerCase();
-      final tags = p.tags.map((t) => t.toLowerCase()).toList();
-      return title.contains(q) ||
-          desc.contains(q) ||
-          tags.any((t) => t.contains(q));
-    }).toList();
-
-    final matchedVendors = vendors.where((v) {
-      return v.name.toLowerCase().contains(q) ||
-          v.tagline.toLowerCase().contains(q);
-    }).toList();
-
-    if (!mounted) return;
-
-    if (matchedProducts.isEmpty && matchedVendors.isEmpty) {
-      showModalBottomSheet(
-        context: context,
-        builder: (_) => Padding(
-          padding: EdgeInsets.all(24.r),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'No results',
-                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8.h),
-              Text('Try adjusting your search.'),
-            ],
-          ),
-        ),
-      );
-      return;
-    }
-
+  Future<void> _performCombinedSearch(
+    String query, {
+    String? initialFilter,
+  }) async {
+    // Show modern search results modal immediately
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.3,
-          maxChildSize: 0.95,
-          builder: (context, controller) {
-            return Container(
-              decoration: BoxDecoration(
-                color: AppColors.appWhite,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(16.r),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Search results',
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close_rounded),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
-                    Expanded(
-                      child: ListView.builder(
-                        controller: controller,
-                        itemCount:
-                            matchedProducts.length + matchedVendors.length + 2,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.h),
-                              child: Text(
-                                'Products',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            );
-                          }
-
-                          if (index > 0 && index <= matchedProducts.length) {
-                            final product = matchedProducts[index - 1];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.h),
-                              child: Material(
-                                borderRadius: BorderRadius.circular(16.r),
-                                elevation: 6,
-                                shadowColor: AppColors.neutral300.withValues(
-                                  alpha: 0.6,
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    // Push new route from sheet context without closing the sheet,
-                                    // so when the user navigates back they return to the search results.
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductDetailScreen(
-                                          productId: product.id,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.white,
-                                      borderRadius: BorderRadius.circular(16.r),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(16.r),
-                                            bottomLeft: Radius.circular(16.r),
-                                          ),
-                                          child: SizedBox(
-                                            width: 110.w,
-                                            height: 90.h,
-                                            child: product.images.isNotEmpty
-                                                ? CachedImage(
-                                                    imageUrl:
-                                                        product.images.first,
-                                                    fit: BoxFit.cover,
-                                                  )
-                                                : Container(
-                                                    color: AppColors.neutral100,
-                                                  ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 12.w,
-                                              vertical: 10.h,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  product.title,
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 6.h),
-                                                Text(
-                                                  product.shortDescription,
-                                                  style: TextStyle(
-                                                    color: AppColors.neutral600,
-                                                    fontSize: 13.sp,
-                                                  ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                SizedBox(height: 8.h),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 10.w,
-                                                            vertical: 6.h,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors.primary
-                                                            .withValues(
-                                                              alpha: 0.1,
-                                                            ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12.r,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        CurrencyFormatter.formatIraqiDinar(
-                                                          product.price,
-                                                        ),
-                                                        style: TextStyle(
-                                                          color:
-                                                              AppColors.primary,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons
-                                                            .arrow_forward_ios_rounded,
-                                                        size: 18.sp,
-                                                        color: AppColors
-                                                            .neutral400,
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                        Navigator.push(
-                                                          this.context,
-                                                          MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                ProductDetailScreen(
-                                                                  productId:
-                                                                      product
-                                                                          .id,
-                                                                ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
-                          if (index == matchedProducts.length + 1) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.h),
-                              child: Text(
-                                'Vendors',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            );
-                          }
-
-                          final vendorIndex =
-                              index - (matchedProducts.length + 2);
-                          final vendor = matchedVendors[vendorIndex];
-                          return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.h),
-                            child: InkWell(
-                              onTap: () {
-                                // Push storefront above the sheet so the sheet remains when popping back
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => StorefrontScreen(
-                                      vendorId: vendor.id,
-                                      vendorName: vendor.name,
-                                    ),
-                                  ),
-                                );
-                              },
-                              borderRadius: BorderRadius.circular(16.r),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      vendor.primaryColor,
-                                      vendor.secondaryColor,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: vendor.primaryColor.withValues(
-                                        alpha: 0.18,
-                                      ),
-                                      blurRadius: 18,
-                                      offset: const Offset(0, 8),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      left: 12.w,
-                                      top: 12.h,
-                                      child: CircleAvatar(
-                                        radius: 28.r,
-                                        backgroundColor: AppColors.white,
-                                        child: CircleAvatar(
-                                          radius: 26.r,
-                                          backgroundImage: NetworkImage(
-                                            vendor.logoUrl,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(
-                                        84.w,
-                                        18.h,
-                                        16.w,
-                                        18.h,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            vendor.name,
-                                            style: TextStyle(
-                                              color:
-                                                  vendor.textColor ??
-                                                  AppColors.white,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                          SizedBox(height: 6.h),
-                                          Text(
-                                            vendor.tagline,
-                                            style: TextStyle(
-                                              color:
-                                                  (vendor.textColor ??
-                                                          AppColors.white)
-                                                      .withValues(alpha: 0.9),
-                                              fontSize: 13.sp,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
+      isDismissible: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _SearchResultsSheet(
+        query: query,
+        repo: _repo,
+        initialFilter: initialFilter,
+      ),
     );
   }
 
@@ -1682,6 +1455,636 @@ class _FlashDealTimerState extends State<_FlashDealTimer> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// Modern Search Results Sheet
+
+class _SearchResultsSheet extends StatefulWidget {
+  final String query;
+  final MarketplaceRepository repo;
+  final String? initialFilter;
+
+  const _SearchResultsSheet({
+    required this.query,
+    required this.repo,
+    this.initialFilter,
+  });
+
+  @override
+  State<_SearchResultsSheet> createState() => _SearchResultsSheetState();
+}
+
+class _SearchResultsSheetState extends State<_SearchResultsSheet>
+    with SingleTickerProviderStateMixin {
+  List<ProductModel> _matchedProducts = [];
+  List<VendorModel> _matchedVendors = [];
+  bool _isLoading = true;
+  String _selectedFilter = 'All';
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    // apply any initial filter from caller
+    if (widget.initialFilter != null) {
+      _selectedFilter = widget.initialFilter!;
+    }
+    _performSearch();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _performSearch() async {
+    setState(() => _isLoading = true);
+
+    final q = widget.query.toLowerCase();
+    final products = await widget.repo.getAllProducts();
+    final vendors = await widget.repo.getVendors();
+
+    final matchedProducts = products.where((p) {
+      final title = p.title.toLowerCase();
+      final desc = p.shortDescription.toLowerCase();
+      final tags = p.tags.map((t) => t.toLowerCase()).toList();
+      return title.contains(q) ||
+          desc.contains(q) ||
+          tags.any((t) => t.contains(q));
+    }).toList();
+
+    final matchedVendors = vendors.where((v) {
+      return v.name.toLowerCase().contains(q) ||
+          v.tagline.toLowerCase().contains(q);
+    }).toList();
+
+    if (mounted) {
+      setState(() {
+        _matchedProducts = matchedProducts.cast<ProductModel>();
+        _matchedVendors = matchedVendors.cast<VendorModel>();
+        _isLoading = false;
+      });
+      _animationController.forward();
+    }
+  }
+
+  List<dynamic> get _filteredResults {
+    switch (_selectedFilter) {
+      case 'Products':
+        return _matchedProducts;
+      case 'Vendors':
+        return _matchedVendors;
+      default:
+        return [..._matchedProducts, ..._matchedVendors];
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.neutral25,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.1),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _buildHandle(),
+              _buildHeader(),
+              _buildFilterChips(),
+              Expanded(
+                child: _isLoading
+                    ? _buildLoadingState()
+                    : _filteredResults.isEmpty
+                    ? _buildEmptyState()
+                    : _buildResultsList(scrollController),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHandle() {
+    return Container(
+      margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+      width: 40.w,
+      height: 4.h,
+      decoration: BoxDecoration(
+        color: AppColors.neutral300,
+        borderRadius: BorderRadius.circular(2.r),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 8.h, 16.w, 16.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Search Results',
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.neutral900,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                if (!_isLoading)
+                  Text(
+                    '${_matchedProducts.length + _matchedVendors.length} results for "${widget.query}"',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.neutral600,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.neutral200,
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: Icon(Icons.close_rounded, color: AppColors.neutral700),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChips() {
+    final filters = ['All', 'Products', 'Vendors'];
+    return Container(
+      height: 50.h,
+      margin: EdgeInsets.only(bottom: 16.h),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        itemCount: filters.length,
+        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        itemBuilder: (context, index) {
+          final filter = filters[index];
+          final isSelected = _selectedFilter == filter;
+          int count = 0;
+          if (filter == 'Products') {
+            count = _matchedProducts.length;
+          } else if (filter == 'Vendors') {
+            count = _matchedVendors.length;
+          } else {
+            count = _matchedProducts.length + _matchedVendors.length;
+          }
+
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: FilterChip(
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(filter),
+                  if (count > 0) ...[
+                    SizedBox(width: 8.w),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 2.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.white.withValues(alpha: 0.3)
+                            : AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Text(
+                        '$count',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? AppColors.white
+                              : AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() => _selectedFilter = filter);
+              },
+              backgroundColor: AppColors.white,
+              selectedColor: AppColors.primary,
+              labelStyle: TextStyle(
+                color: isSelected ? AppColors.white : AppColors.neutral700,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                fontSize: 14.sp,
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              elevation: isSelected ? 4 : 0,
+              shadowColor: AppColors.primary.withValues(alpha: 0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.r),
+                side: BorderSide(
+                  color: isSelected ? AppColors.primary : AppColors.neutral300,
+                  width: isSelected ? 0 : 1,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(AppColors.primary),
+              strokeWidth: 3,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          Text(
+            'Searching...',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral700,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Please wait while we find the best results',
+            style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(32.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(32.r),
+              decoration: BoxDecoration(
+                color: AppColors.neutral100,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.search_off_rounded,
+                size: 64.sp,
+                color: AppColors.neutral400,
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Text(
+              'No results found',
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.neutral900,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'We couldn\'t find anything matching "${widget.query}"',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
+            ),
+            SizedBox(height: 24.h),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.refresh_rounded),
+              label: Text('Try another search'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                elevation: 4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultsList(ScrollController controller) {
+    return FadeTransition(
+      opacity: _animationController,
+      child: ListView.separated(
+        controller: controller,
+        padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
+        itemCount: _filteredResults.length,
+        separatorBuilder: (_, __) => SizedBox(height: 16.h),
+        itemBuilder: (context, index) {
+          final item = _filteredResults[index];
+          if (item is ProductModel) {
+            return _buildProductCard(item, index);
+          } else if (item is VendorModel) {
+            return _buildVendorCard(item, index);
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+
+  Widget _buildProductCard(ProductModel product, int index) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 50)),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (0.2 * value.clamp(0.0, 1.0)),
+          child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
+        );
+      },
+      child: Material(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        elevation: 2,
+        shadowColor: AppColors.neutral300.withValues(alpha: 0.5),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ProductDetailScreen(productId: product.id),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(20.r),
+          child: Container(
+            padding: EdgeInsets.all(12.r),
+            child: Row(
+              children: [
+                Hero(
+                  tag: 'product-${product.id}',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: Container(
+                      width: 100.w,
+                      height: 100.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary.withValues(alpha: 0.1),
+                            AppColors.accent.withValues(alpha: 0.1),
+                          ],
+                        ),
+                      ),
+                      child: product.images.isNotEmpty
+                          ? CachedImage(
+                              imageUrl: product.images.first,
+                              fit: BoxFit.cover,
+                            )
+                          : Icon(
+                              Icons.image_outlined,
+                              size: 40.sp,
+                              color: AppColors.neutral400,
+                            ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.title,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.neutral900,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 6.h),
+                      Text(
+                        product.shortDescription,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: AppColors.neutral600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 12.h),
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.primary.withValues(alpha: 0.15),
+                                  AppColors.accent.withValues(alpha: 0.15),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Text(
+                              CurrencyFormatter.formatIraqiDinar(product.price),
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16.sp,
+                            color: AppColors.neutral400,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVendorCard(VendorModel vendor, int index) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 50)),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (0.2 * value.clamp(0.0, 1.0)),
+          child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
+        );
+      },
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => StorefrontScreen(
+                  vendorId: vendor.id,
+                  vendorName: vendor.name,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(20.r),
+          child: Container(
+            padding: EdgeInsets.all(16.r),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  vendor.primaryColor.withValues(alpha: 0.9),
+                  vendor.secondaryColor.withValues(alpha: 0.9),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: vendor.primaryColor.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Hero(
+                  tag: 'vendor-${vendor.id}',
+                  child: Container(
+                    padding: EdgeInsets.all(3.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 30.r,
+                      backgroundImage: NetworkImage(vendor.logoUrl),
+                      backgroundColor: AppColors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        vendor.name,
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: vendor.textColor ?? AppColors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 6.h),
+                      Text(
+                        vendor.tagline,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: (vendor.textColor ?? AppColors.white)
+                              .withValues(alpha: 0.9),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  color: vendor.textColor ?? AppColors.white,
+                  size: 24.sp,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
