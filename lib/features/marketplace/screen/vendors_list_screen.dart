@@ -491,9 +491,7 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
   @override
   Widget build(BuildContext context) {
     // If vendor provides gradientColors, prefer those for a unique look
-    final vendorGradientColors = widget.vendor.gradientColors != null
-        ? widget.vendor.gradientColors!.map((c) => Color(c)).toList()
-        : null;
+    final vendorGradientColors = widget.vendor.gradientColors?.map((c) => Color(c)).toList();
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(

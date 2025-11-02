@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
   bool _showSearchBar = false;
+  final TextEditingController _searchController = TextEditingController();
 
   final List<String> _categories = [
     'All',
@@ -70,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     _scrollController.dispose();
     _fadeController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -641,8 +643,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildFloatingSearchBar() {
+    // compute top offset to place the search bar below the status bar and AppBar
+    final double topOffset =
+        MediaQuery.of(context).padding.top + kToolbarHeight + 8.h;
+
     return Positioned(
-      top: 60.h,
+      top: topOffset,
       left: 20.w,
       right: 20.w,
       child: AnimatedContainer(
@@ -653,6 +659,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(28.r),
           shadowColor: AppColors.primary.withValues(alpha: 0.3),
           child: TextField(
+            controller: _searchController,
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) async {
+              if (value.trim().isEmpty) return;
+              await _performCombinedSearch(value.trim());
+            },
             decoration: InputDecoration(
               hintText: 'Search products, vendors...',
               prefixIcon: const Icon(Icons.search, color: AppColors.primary),
@@ -674,6 +686,373 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _performCombinedSearch(String query) async {
+    final q = query.toLowerCase();
+
+    final products = await _repo.getAllProducts();
+    final vendors = await _repo.getVendors();
+
+    final matchedProducts = products.where((p) {
+      final title = p.title.toLowerCase();
+      final desc = p.shortDescription.toLowerCase();
+      final tags = p.tags.map((t) => t.toLowerCase()).toList();
+      return title.contains(q) ||
+          desc.contains(q) ||
+          tags.any((t) => t.contains(q));
+    }).toList();
+
+    final matchedVendors = vendors.where((v) {
+      return v.name.toLowerCase().contains(q) ||
+          v.tagline.toLowerCase().contains(q);
+    }).toList();
+
+    if (!mounted) return;
+
+    if (matchedProducts.isEmpty && matchedVendors.isEmpty) {
+      showModalBottomSheet(
+        context: context,
+        builder: (_) => Padding(
+          padding: EdgeInsets.all(24.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'No results',
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8.h),
+              Text('Try adjusting your search.'),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.95,
+          builder: (context, controller) {
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.appWhite,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Search results',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: controller,
+                        itemCount:
+                            matchedProducts.length + matchedVendors.length + 2,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Text(
+                                'Products',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (index > 0 && index <= matchedProducts.length) {
+                            final product = matchedProducts[index - 1];
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Material(
+                                borderRadius: BorderRadius.circular(16.r),
+                                elevation: 6,
+                                shadowColor: AppColors.neutral300.withValues(
+                                  alpha: 0.6,
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    // Push new route from sheet context without closing the sheet,
+                                    // so when the user navigates back they return to the search results.
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => ProductDetailScreen(
+                                          productId: product.id,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(16.r),
+                                            bottomLeft: Radius.circular(16.r),
+                                          ),
+                                          child: SizedBox(
+                                            width: 110.w,
+                                            height: 90.h,
+                                            child: product.images.isNotEmpty
+                                                ? CachedImage(
+                                                    imageUrl:
+                                                        product.images.first,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Container(
+                                                    color: AppColors.neutral100,
+                                                  ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w,
+                                              vertical: 10.h,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  product.title,
+                                                  style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 6.h),
+                                                Text(
+                                                  product.shortDescription,
+                                                  style: TextStyle(
+                                                    color: AppColors.neutral600,
+                                                    fontSize: 13.sp,
+                                                  ),
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                SizedBox(height: 8.h),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal: 10.w,
+                                                            vertical: 6.h,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors.primary
+                                                            .withValues(
+                                                              alpha: 0.1,
+                                                            ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              12.r,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        CurrencyFormatter.formatIraqiDinar(
+                                                          product.price,
+                                                        ),
+                                                        style: TextStyle(
+                                                          color:
+                                                              AppColors.primary,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons
+                                                            .arrow_forward_ios_rounded,
+                                                        size: 18.sp,
+                                                        color: AppColors
+                                                            .neutral400,
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        Navigator.push(
+                                                          this.context,
+                                                          MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                ProductDetailScreen(
+                                                                  productId:
+                                                                      product
+                                                                          .id,
+                                                                ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (index == matchedProducts.length + 1) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Text(
+                                'Vendors',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            );
+                          }
+
+                          final vendorIndex =
+                              index - (matchedProducts.length + 2);
+                          final vendor = matchedVendors[vendorIndex];
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.h),
+                            child: InkWell(
+                              onTap: () {
+                                // Push storefront above the sheet so the sheet remains when popping back
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => StorefrontScreen(
+                                      vendorId: vendor.id,
+                                      vendorName: vendor.name,
+                                    ),
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      vendor.primaryColor,
+                                      vendor.secondaryColor,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: vendor.primaryColor.withValues(
+                                        alpha: 0.18,
+                                      ),
+                                      blurRadius: 18,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 12.w,
+                                      top: 12.h,
+                                      child: CircleAvatar(
+                                        radius: 28.r,
+                                        backgroundColor: AppColors.white,
+                                        child: CircleAvatar(
+                                          radius: 26.r,
+                                          backgroundImage: NetworkImage(
+                                            vendor.logoUrl,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(
+                                        84.w,
+                                        18.h,
+                                        16.w,
+                                        18.h,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            vendor.name,
+                                            style: TextStyle(
+                                              color:
+                                                  vendor.textColor ??
+                                                  AppColors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          SizedBox(height: 6.h),
+                                          Text(
+                                            vendor.tagline,
+                                            style: TextStyle(
+                                              color:
+                                                  (vendor.textColor ??
+                                                          AppColors.white)
+                                                      .withValues(alpha: 0.9),
+                                              fontSize: 13.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

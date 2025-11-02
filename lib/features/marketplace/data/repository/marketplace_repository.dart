@@ -318,6 +318,11 @@ class MarketplaceRepository {
     return mockProducts.where((p) => p.vendorId == vendorId).toList();
   }
 
+  Future<List<ProductModel>> getAllProducts() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return mockProducts;
+  }
+
   Future<ProductModel?> getProductById(String id) async {
     await Future.delayed(const Duration(milliseconds: 300));
     try {

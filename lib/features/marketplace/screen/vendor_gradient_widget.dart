@@ -8,11 +8,11 @@ class AnimatedVendorGradient extends StatefulWidget {
   final Duration duration;
 
   const AnimatedVendorGradient({
-    Key? key,
+    super.key,
     required this.colors,
     this.borderRadius,
     this.duration = const Duration(seconds: 6),
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedVendorGradient> createState() => _AnimatedVendorGradientState();

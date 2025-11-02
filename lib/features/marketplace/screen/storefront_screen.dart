@@ -141,8 +141,9 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                       builder: (context) {
                         final vendor = snapshot.data!;
                         final banners = <String>[];
-                        if (vendor.bannerUrl.isNotEmpty)
+                        if (vendor.bannerUrl.isNotEmpty) {
                           banners.add(vendor.bannerUrl);
+                        }
                         if (vendorTheme.backgroundImageUrl != null &&
                             vendorTheme.backgroundImageUrl!.isNotEmpty) {
                           banners.add(vendorTheme.backgroundImageUrl!);
