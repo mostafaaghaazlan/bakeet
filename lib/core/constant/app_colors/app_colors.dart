@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 extension AppColors on ColorScheme {
-  // Main Aman App Colors - Blue theme
-  static const Color primary = Color(0xFF2196F3); // Main blue
-  static const Color secondary = Color(0xFF1976D2); // Darker blue for secondary
-  static const Color secoundPrimary = Color(0xFF1976D2); // Darker blue
-  static const Color accent = Color(0xFF64B5F6); // Light blue
+  // Main brand colors (updated to match Bakeet logo)
+  // Primary: vivid purple, Accent/Secondary: vibrant teal
+  static const Color primary = Color(0xFF6C4CE5); // Purple (logo)
+  static const Color secondary = Color(0xFF00CF9D); // Teal/Green (logo)
+  static const Color secoundPrimary = Color(0xFF5B3FE0); // darker purple
+  static const Color accent = Color(0xFF00E0A9); // lighter teal
   static const Color appBackground = Color(
-    0xFFE3F2FD,
-  ); // Very light blue background
+    0xFFF6F7FB,
+  ); // Very light neutral background tuned for brand
 
   // Neutral colors
   static const Color neutral = Color(0xff808080);
@@ -30,18 +31,18 @@ extension AppColors on ColorScheme {
   static const Color cardGreen = Color(0xFF4CAF50);
   static const Color cardRed = Color(0xFFE91E63);
 
-  // Blue scale for primary
-  static const Color primary25 = Color(0xFFE3F2FD);
-  static const Color primary50 = Color(0xFFBBDEFB);
-  static const Color primary100 = Color(0xFF90CAF9);
-  static const Color primary200 = Color(0xFF64B5F6);
-  static const Color primary300 = Color(0xFF42A5F5);
-  static const Color primary400 = Color(0xFF2196F3);
-  static const Color primary500 = Color(0xFF2196F3);
-  static const Color primary600 = Color(0xFF1E88E5);
-  static const Color primary700 = Color(0xFF1976D2);
-  static const Color primary800 = Color(0xFF1565C0);
-  static const Color primary900 = Color(0xFF0D47A1);
+  // Branded purple scale for primary
+  static const Color primary25 = Color(0xFFF4F1FF);
+  static const Color primary50 = Color(0xFFE9E2FF);
+  static const Color primary100 = Color(0xFFD6C9FF);
+  static const Color primary200 = Color(0xFFBFA0FF);
+  static const Color primary300 = Color(0xFF9A78FF);
+  static const Color primary400 = Color(0xFF7A59F0);
+  static const Color primary500 = Color(0xFF6C4CE5);
+  static const Color primary600 = Color(0xFF613ED1);
+  static const Color primary700 = Color(0xFF5230B0);
+  static const Color primary800 = Color(0xFF3F2688);
+  static const Color primary900 = Color(0xFF2B1956);
 
   static const Color neutral25 = Color(0xffFAFAFA);
   static const Color neutral50 = Color(0xffF2F2F2);

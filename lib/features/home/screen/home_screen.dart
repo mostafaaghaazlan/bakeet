@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           colors: [
             AppColors.primary25,
             AppColors.appWhite,
-            AppColors.primary50.withValues(alpha: 0.3),
+            AppColors.secondary.withValues(alpha: 0.08),
           ],
           stops: const [0.0, 0.5, 1.0],
         ),
@@ -145,12 +145,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.accent],
+                colors: [AppColors.primary, AppColors.secondary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.3),
+                  color: AppColors.primary.withValues(alpha: 0.28),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -678,7 +680,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [AppColors.primary, AppColors.accent],
+                      colors: [AppColors.primary, AppColors.secondary],
                     ),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -830,17 +832,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildFAB(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const VendorsListScreen()),
+    // Use a decorated container to show a purple->teal gradient behind the FAB
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(40.r),
       ),
-      label: const Text('Explore'),
-      icon: const Icon(Icons.explore_outlined),
-      backgroundColor: AppColors.primary,
-      foregroundColor: AppColors.white,
-      elevation: 8,
-      extendedPadding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const VendorsListScreen()),
+        ),
+        label: const Text('Explore'),
+        icon: const Icon(Icons.explore_outlined),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.white,
+        extendedPadding: EdgeInsets.symmetric(horizontal: 24.w),
+      ),
     );
   }
 }
@@ -974,7 +994,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
               decoration: BoxDecoration(
                 gradient: _currentPage == index
                     ? const LinearGradient(
-                        colors: [AppColors.primary, AppColors.accent],
+                        colors: [AppColors.primary, AppColors.secondary],
                       )
                     : null,
                 color: _currentPage == index ? null : AppColors.neutral300,
@@ -998,7 +1018,7 @@ class _ModernVendorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradients = [
-      [AppColors.primary, AppColors.accent],
+      [AppColors.primary, AppColors.secondary],
       [AppColors.cardPurple, AppColors.cardRed],
       [AppColors.cardGreen, AppColors.cardBlue],
     ];
