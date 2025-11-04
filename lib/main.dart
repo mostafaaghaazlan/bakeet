@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'core/constant/app_colors/app_colors.dart';
+import 'core/classes/keys.dart';
 import 'core/di/injection.dart';
 import 'package:bakeet/features/home/screen/home_screen.dart';
 
@@ -38,13 +39,14 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return MaterialApp(
+            navigatorKey: Keys.navigatorKey,
             debugShowCheckedModeBanner: false,
             title: 'Aman - Union & Insurance Services',
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             // Launch to the modern e-commerce HomeScreen
-            home:  HomeScreen(),
+            home: HomeScreen(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(

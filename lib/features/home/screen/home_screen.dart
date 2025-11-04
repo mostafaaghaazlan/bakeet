@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:bakeet/core/utils/Navigation/navigation.dart';
+import 'package:bakeet/features/marketplace/screen/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
+import 'package:bakeet/core/ui/widgets/logo_widget.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 import 'package:bakeet/features/marketplace/screen/vendors_list_screen.dart';
@@ -158,16 +161,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            child: Icon(
-              Icons.storefront_rounded,
-              color: AppColors.white,
-              size: 24.sp,
+            // Use the app logo widget for a consistent brand mark
+            child: SizedBox(
+              width: 46.w,
+              height: 34.h,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: LogoWidget(height: 34.h, width: 46.w),
+              ),
             ),
           ),
           SizedBox(width: 12.w),
           Text(
             'Bakeet',
             style: TextStyle(
+              color: AppColors.neutral400,
               fontWeight: FontWeight.bold,
               fontSize: 24.sp,
               letterSpacing: 0.5,
@@ -184,7 +192,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Stack(
           children: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigation.push(CartScreen());
+              },
               icon: const Icon(Icons.shopping_cart_outlined),
               tooltip: 'Cart',
             ),
