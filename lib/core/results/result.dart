@@ -1,9 +1,5 @@
-
 class Result<Data> {
-  Result({
-    this.data,
-    this.error,
-  }) : assert(data != null || error != null);
+  Result({this.data, this.error}) : assert(data != null || error != null);
   final Data? data;
   final String? error;
 
@@ -14,10 +10,10 @@ class Result<Data> {
   bool get hasDataAndError => data != null;
 }
 
-class RemoteResult<Data > extends Result<Data> {
+class RemoteResult<Data> extends Result<Data> {
   RemoteResult({super.data, super.error});
 }
 
-class PaginatedResult<Data > extends Result<List<Data>> {
+class PaginatedResult<Data> extends Result<List<Data>> {
   PaginatedResult({super.data, super.error});
 }

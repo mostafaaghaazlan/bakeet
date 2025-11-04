@@ -20,6 +20,8 @@ import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
 import 'package:bakeet/core/di/injection.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../vendor managment/screen/vendor_registration_screen.dart';
+
 /// A stunning, modern e-commerce home page with advanced animations and beautiful design
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -193,10 +195,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                Navigation.push(CartScreen());
+                Navigation.push(VendorRegistrationScreen());
               },
-              icon: const Icon(Icons.shopping_cart_outlined),
-              tooltip: 'Cart',
+              icon: const Icon(Icons.add),
+              tooltip: 'Added vendor',
             ),
             Positioned(
               right: 8,

@@ -56,9 +56,9 @@ class CarouselWidget extends StatelessWidget {
             autoPlayInterval: const Duration(seconds: 5),
             autoPlayAnimationDuration: const Duration(milliseconds: 800),
             autoPlayCurve: Curves.easeInOutExpo,
-            enlargeCenterPage: true, 
+            enlargeCenterPage: true,
             enlargeFactor: 0.22,
-            viewportFraction: viewportFraction, 
+            viewportFraction: viewportFraction,
             scrollDirection: Axis.horizontal,
             onPageChanged: (index, reason) {
               onPageChanged(index);

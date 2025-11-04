@@ -141,12 +141,9 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                       builder: (context) {
                         final vendor = snapshot.data!;
                         final banners = <String>[];
+                        // Only add banner URL, NOT background image
                         if (vendor.bannerUrl.isNotEmpty) {
                           banners.add(vendor.bannerUrl);
-                        }
-                        if (vendorTheme.backgroundImageUrl != null &&
-                            vendorTheme.backgroundImageUrl!.isNotEmpty) {
-                          banners.add(vendorTheme.backgroundImageUrl!);
                         }
 
                         if (banners.isEmpty) {
@@ -182,9 +179,19 @@ class _StorefrontScreenState extends State<StorefrontScreen>
 
   Future<VendorModel?> _getVendor(MarketplaceRepository repository) async {
     final vendors = await repository.getVendors();
+    print('🔍 Looking for vendor with ID: ${widget.vendorId}');
+    print('🔍 Total vendors in repository: ${vendors.length}');
     try {
-      return vendors.firstWhere((v) => v.id == widget.vendorId);
+      final vendor = vendors.firstWhere((v) => v.id == widget.vendorId);
+      print('✅ Found vendor: ${vendor.name}');
+      print('🎨 Vendor colors: Primary=${vendor.primaryColor.toARGB32()}, Secondary=${vendor.secondaryColor.toARGB32()}, Accent=${vendor.accentColor.toARGB32()}');
+      print('🖼️ Banner: ${vendor.bannerUrl}');
+      print('🖼️ Background: ${vendor.backgroundImageUrl}');
+      print('🖼️ Logo: ${vendor.logoUrl}');
+      return vendor;
     } catch (e) {
+      print('❌ Vendor not found: $e');
+      print('📋 Available vendor IDs: ${vendors.map((v) => v.id).join(", ")}');
       return null;
     }
   }
@@ -256,8 +263,13 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                     ),
                     child: CircleAvatar(
                       radius: 40.r,
-                      backgroundImage: NetworkImage(vendor.logoUrl),
                       backgroundColor: AppColors.white,
+                      child: ClipOval(
+                        child: CachedImage(
+                          imageUrl: vendor.logoUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -729,11 +741,15 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
 
   @override
   Widget build(BuildContext context) {
-    final hasDiscount = widget.product.compareAtPrice != null;
+    final hasDiscount =
+        widget.product.compareAtPrice != null &&
+        widget.product.compareAtPrice! > 0 &&
+        widget.product.compareAtPrice! > widget.product.price;
     final discountPercent = hasDiscount
         ? (((widget.product.compareAtPrice! - widget.product.price) /
                       widget.product.compareAtPrice!) *
                   100)
+              .clamp(0, 100)
               .round()
         : 0;
 
@@ -862,6 +878,41 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                           ),
                         ),
                         SizedBox(height: 4.h),
+                        // Available Colors
+                        if (widget.product.availableColors != null &&
+                            widget.product.availableColors!.isNotEmpty)
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 4.h),
+                            child: SizedBox(
+                              height: 16.h,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: widget
+                                    .product
+                                    .availableColors!
+                                    .length
+                                    .clamp(0, 5),
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(width: 4.w),
+                                itemBuilder: (context, index) {
+                                  final color =
+                                      widget.product.availableColors![index];
+                                  return Container(
+                                    width: 16.w,
+                                    height: 16.h,
+                                    decoration: BoxDecoration(
+                                      color: Color(color.colorValue),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.neutral300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         if (hasDiscount)
                           Text(
                             CurrencyFormatter.formatIraqiDinar(

@@ -253,11 +253,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       );
     }
 
-    final hasDiscount = _product!.compareAtPrice != null;
+    final hasDiscount =
+        _product!.compareAtPrice != null &&
+        _product!.compareAtPrice! > 0 &&
+        _product!.compareAtPrice! > _product!.price;
     final discountPercent = hasDiscount
         ? (((_product!.compareAtPrice! - _product!.price) /
                       _product!.compareAtPrice!) *
                   100)
+              .clamp(0, 100)
               .round()
         : 0;
 
@@ -333,6 +337,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         );
                       }).toList(),
                     ),
+                    // Available Colors
+                    if (_product!.availableColors != null &&
+                        _product!.availableColors!.isNotEmpty) ...[
+                      SizedBox(height: 20.h),
+                      Text(
+                        'Available Colors',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.neutral900,
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
+                      Wrap(
+                        spacing: 12.w,
+                        runSpacing: 12.h,
+                        children: _product!.availableColors!.map((color) {
+                          return Column(
+                            children: [
+                              Container(
+                                width: 48.w,
+                                height: 48.h,
+                                decoration: BoxDecoration(
+                                  color: Color(color.colorValue),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.neutral300,
+                                    width: 2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.neutral300,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                color.name,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: AppColors.neutral700,
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ],
                     SizedBox(height: 20.h),
                     // Price Section
                     Row(

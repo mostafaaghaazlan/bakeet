@@ -30,7 +30,8 @@ class GetLocation {
 
     if (kDebugMode) {
       print(
-          "Latitude: ${locationData.latitude}, Longitude: ${locationData.longitude}");
+        "Latitude: ${locationData.latitude}, Longitude: ${locationData.longitude}",
+      );
     }
 
     lat = locationData.latitude;

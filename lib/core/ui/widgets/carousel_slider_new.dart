@@ -84,11 +84,11 @@
 //             viewportFraction: widget.viewportFraction,
 //             enlargeCenterPage: widget.enlargeCenterPage,
 //             enlargeStrategy: CenterPageEnlargeStrategy.scale,
-//             enlargeFactor: 0.18, 
+//             enlargeFactor: 0.18,
 //             enableInfiniteScroll: widget.enableInfiniteScroll,
 //             autoPlay: widget.autoPlay,
 //             autoPlayInterval: widget.autoPlayInterval,
-//             padEnds: false, 
+//             padEnds: false,
 //             onPageChanged: (i, _) {
 //               setState(() => _activeIndex = i);
 //               widget.onIndexChanged?.call(i);

@@ -12,11 +12,17 @@ class FadeInAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tween = MovieTween()
-      ..tween<double>(AniProps.opacity, Tween<double>(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 500))
       ..tween<double>(
-          AniProps.translateY, Tween<double>(begin: -30.0, end: 0.0),
-          duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+        AniProps.opacity,
+        Tween<double>(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 500),
+      )
+      ..tween<double>(
+        AniProps.translateY,
+        Tween<double>(begin: -30.0, end: 0.0),
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
 
     return PlayAnimationBuilder<Movie>(
       delay: Duration(milliseconds: (500 * delay).round()),

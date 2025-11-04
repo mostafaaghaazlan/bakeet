@@ -15,9 +15,6 @@ var customFooter = CustomFooter(
     } else {
       body = const Text("");
     }
-    return SizedBox(
-      height: 55.0,
-      child: Center(child: body),
-    );
+    return SizedBox(height: 55.0, child: Center(child: body));
   },
 );

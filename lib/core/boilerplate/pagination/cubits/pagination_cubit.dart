@@ -23,10 +23,7 @@ class PaginationCubit<ListModel> extends Cubit<PaginationState> {
       skip += take;
     }
 
-    var requestData = GetListRequest(
-      skip: skip,
-      take: take,
-    );
+    var requestData = GetListRequest(skip: skip, take: take);
     var response = await getData(requestData);
 
     if (response == null) {
@@ -43,9 +40,14 @@ class PaginationCubit<ListModel> extends Cubit<PaginationState> {
           list = response.data;
         }
 
-        emit(GetListSuccessfully(
+        emit(
+          GetListSuccessfully(
             list: list.toSet().toList(),
-            noMoreData: (response.data.toSet().toList() as List<ListModel>).isEmpty && loadMore));
+            noMoreData:
+                (response.data.toSet().toList() as List<ListModel>).isEmpty &&
+                loadMore,
+          ),
+        );
       } else if (response.hasErrorOnly) {
         if (response.error != null) {
           emit(Error(response.error ?? ''));

@@ -5,6 +5,11 @@ import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 import 'mock_products.dart';
 
 class MarketplaceRepository {
+  // Singleton pattern
+  static final MarketplaceRepository _instance = MarketplaceRepository._internal();
+  factory MarketplaceRepository() => _instance;
+  MarketplaceRepository._internal();
+
   // Mock in-app data
   final List<VendorModel> _vendors = [
     VendorModel(
@@ -313,9 +318,28 @@ class MarketplaceRepository {
     return _vendors;
   }
 
+  Future<VendorModel> addVendor(VendorModel vendor) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    _vendors.add(vendor);
+    print('🔷 Vendor added to repository: ${vendor.id} - ${vendor.name}');
+    print('🔷 Total vendors in repository: ${_vendors.length}');
+    return vendor;
+  }
+
+  Future<void> addProduct(ProductModel product) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    mockProducts.add(product);
+    print('🔷 Product added to repository: ${product.id} - ${product.title}');
+    print('🔷 Total products in repository: ${mockProducts.length}');
+  }
+
   Future<List<ProductModel>> getProductsByVendor(String vendorId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    return mockProducts.where((p) => p.vendorId == vendorId).toList();
+    final products = mockProducts.where((p) => p.vendorId == vendorId).toList();
+    print(
+      '🔷 Getting products for vendor $vendorId: found ${products.length} products',
+    );
+    return products;
   }
 
   Future<List<ProductModel>> getAllProducts() async {

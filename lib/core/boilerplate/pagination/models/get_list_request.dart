@@ -1,12 +1,8 @@
-
 class GetListRequest {
   int? skip;
   int? take;
 
-  GetListRequest({
-    this.skip,
-    this.take,
-  });
+  GetListRequest({this.skip, this.take});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

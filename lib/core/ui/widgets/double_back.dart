@@ -9,18 +9,21 @@ class DoubleBackToClose extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
-    return WillPopScope(child: child, onWillPop: () async{
-      final now = DateTime.now();
+    return WillPopScope(
+      child: child,
+      onWillPop: () async {
+        final now = DateTime.now();
         const backPressTimeout = Duration(seconds: 1);
         if (lastPressed == null ||
             now.difference(lastPressed!) > backPressTimeout) {
           lastPressed = now;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('اضغط مرة أخرى للخروج')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('اضغط مرة أخرى للخروج')));
           return false;
         }
         return true;
-    },);
+      },
+    );
   }
 }

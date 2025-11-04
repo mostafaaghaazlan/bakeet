@@ -9,6 +9,8 @@ import 'core/classes/keys.dart';
 import 'core/di/injection.dart';
 import 'package:bakeet/features/home/screen/home_screen.dart';
 
+import 'features/vendor managment/cubit/v_vendor_managment_cubit.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -32,7 +34,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => getIt<HomeCubit>())],
+      providers: [
+        BlocProvider(create: (_) => getIt<HomeCubit>()),
+        BlocProvider(create: (_) => getIt<VVendorManagmentCubit>()),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         minTextAdapt: true,
@@ -41,7 +46,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             navigatorKey: Keys.navigatorKey,
             debugShowCheckedModeBanner: false,
-            title: 'Aman - Union & Insurance Services',
+            title: 'Bakeet',
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,

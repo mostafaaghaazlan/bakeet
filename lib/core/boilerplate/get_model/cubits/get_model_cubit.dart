@@ -14,11 +14,12 @@ class GetModelCubit<Model> extends Cubit<GetModelState> {
     emit(Loading());
     Result response;
     try {
-      response = await getData(); // response = await GetExampleUseCase(ExampleRepository()).call(params: params);
+      response =
+          await getData(); // response = await GetExampleUseCase(ExampleRepository()).call(params: params);
       if (response.hasDataOnly) {
         emit(GetModelSuccessfully(model: response.data));
       } else if (response.hasErrorOnly) {
-        emit(Error(message: response.error??''));
+        emit(Error(message: response.error ?? ''));
       } else {
         emit(Error(message: 'some thing went wrong'));
       }

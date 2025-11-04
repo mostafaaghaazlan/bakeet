@@ -491,7 +491,9 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
   @override
   Widget build(BuildContext context) {
     // If vendor provides gradientColors, prefer those for a unique look
-    final vendorGradientColors = widget.vendor.gradientColors?.map((c) => Color(c)).toList();
+    final vendorGradientColors = widget.vendor.gradientColors
+        ?.map((c) => Color(c))
+        .toList();
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ScaleTransition(
@@ -577,8 +579,13 @@ class _AnimatedVendorCardState extends State<_AnimatedVendorCard>
                       ),
                       child: CircleAvatar(
                         radius: 28.r,
-                        backgroundImage: NetworkImage(widget.vendor.logoUrl),
                         backgroundColor: AppColors.white,
+                        child: ClipOval(
+                          child: CachedImage(
+                            imageUrl: widget.vendor.logoUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -818,10 +825,13 @@ class _AnimatedVendorListCardState extends State<_AnimatedVendorListCard>
                           children: [
                             CircleAvatar(
                               radius: 24.r,
-                              backgroundImage: NetworkImage(
-                                widget.vendor.logoUrl,
-                              ),
                               backgroundColor: AppColors.white,
+                              child: ClipOval(
+                                child: CachedImage(
+                                  imageUrl: widget.vendor.logoUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                             SizedBox(width: 12.w),
                             Expanded(

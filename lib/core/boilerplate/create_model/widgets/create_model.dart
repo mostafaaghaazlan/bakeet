@@ -76,7 +76,7 @@ class _GetModelState<Model> extends State<CreateModel<Model>> {
           return InkWell(
             onTap: () async {
               if (widget.withValidation) {
-                var temp = await widget.onTap!(); 
+                var temp = await widget.onTap!();
                 if (temp != null && temp == true) {
                   cubit?.createModel();
                 }

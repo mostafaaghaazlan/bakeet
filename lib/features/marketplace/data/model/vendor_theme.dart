@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 
@@ -81,9 +82,16 @@ class VendorTheme {
   /// a soft gradient based on the vendor colors is used.
   BoxDecoration get backgroundDecoration {
     if (backgroundImageUrl != null && backgroundImageUrl!.isNotEmpty) {
+      // Check if it's a local file or network URL
+      final isLocalFile = backgroundImageUrl!.startsWith('/') ||
+          backgroundImageUrl!.startsWith('C:') ||
+          backgroundImageUrl!.contains(':\\');
+
       return BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(backgroundImageUrl!),
+          image: isLocalFile
+              ? FileImage(File(backgroundImageUrl!)) as ImageProvider
+              : NetworkImage(backgroundImageUrl!),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
             Colors.black.withValues(alpha: 0.25),

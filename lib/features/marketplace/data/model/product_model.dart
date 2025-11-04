@@ -9,6 +9,7 @@ class ProductModel {
   final List<String> tags;
   final String category;
   final String description;
+  final List<ProductColor>? availableColors;
 
   ProductModel({
     required this.id,
@@ -21,6 +22,7 @@ class ProductModel {
     required this.tags,
     required this.category,
     required this.description,
+    this.availableColors,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -40,6 +42,9 @@ class ProductModel {
         [],
     category: json['category'] ?? '',
     description: json['description'] ?? '',
+    availableColors: (json['availableColors'] as List<dynamic>?)
+        ?.map((e) => ProductColor.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,5 +58,18 @@ class ProductModel {
     'tags': tags,
     'category': category,
     'description': description,
+    'availableColors': availableColors?.map((c) => c.toJson()).toList(),
   };
+}
+
+class ProductColor {
+  final String name;
+  final int colorValue;
+
+  ProductColor({required this.name, required this.colorValue});
+
+  Map<String, dynamic> toJson() => {'name': name, 'colorValue': colorValue};
+
+  factory ProductColor.fromJson(Map<String, dynamic> json) =>
+      ProductColor(name: json['name'], colorValue: json['colorValue']);
 }
