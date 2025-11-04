@@ -7,6 +7,7 @@ import '../../../core/ui/widgets/custom_button.dart';
 import '../../../core/ui/widgets/custom_text_form_field.dart';
 import '../../../core/ui/widgets/upload.dart';
 import '../data/model/vendor_registration_model.dart';
+import 'color_picker_widget.dart';
 
 class AddProductDialog extends StatefulWidget {
   final ProductRegistrationModel? product;
@@ -60,21 +61,102 @@ class _AddProductDialogState extends State<AddProductDialog> {
     super.dispose();
   }
 
-  void _addColor() {
-    showDialog(
+  void _addColor() async {
+    // First, show color picker
+    Color? selectedColor;
+    await showDialog(
       context: context,
-      builder: (context) => _ColorPickerDialog(
-        onColorSelected: (name, color) {
-          print('🎨 Color selected: $name with value ${color.value}');
-          setState(() {
-            _selectedColors.add(
-              ColorOption(name: name, colorValue: color.value),
-            );
-            print('🎨 Total colors after add: ${_selectedColors.length}');
-          });
+      builder: (context) => ColorPickerDialog(
+        title: 'Select Product Color',
+        initialColor: Colors.blue,
+        onColorSelected: (color) {
+          selectedColor = color;
         },
       ),
     );
+
+    // If color was selected, ask for name
+    if (selectedColor != null && mounted) {
+      final nameController = TextEditingController();
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            'Name This Color',
+            style: AppTextStyle.getSemiBoldStyle(
+              color: AppColors.neutral900,
+              fontSize: 18.sp,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Color preview
+              Container(
+                width: double.infinity,
+                height: 60.h,
+                decoration: BoxDecoration(
+                  color: selectedColor,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.neutral300, width: 2),
+                ),
+                child: Center(
+                  child: Text(
+                    '#${selectedColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                    style: AppTextStyle.getSemiBoldStyle(
+                      color: selectedColor!.computeLuminance() > 0.5
+                          ? Colors.black
+                          : Colors.white,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              CustomTextFormField(
+                controller: nameController,
+                labelText: 'Color Name',
+                hintText: 'e.g., Red, Blue, Forest Green',
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                'Cancel',
+                style: AppTextStyle.getMediumStyle(
+                  color: AppColors.neutral600,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+            CustomButton(
+              text: 'Add',
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  Navigator.pop(context, true);
+                }
+              },
+              w: 80.w,
+              h: 40.h,
+              radius: 8.r,
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true && nameController.text.isNotEmpty) {
+        print('🎨 Color selected: ${nameController.text} with value ${selectedColor!.toARGB32()}');
+        setState(() {
+          _selectedColors.add(
+            ColorOption(name: nameController.text, colorValue: selectedColor!.toARGB32()),
+          );
+          print('🎨 Total colors after add: ${_selectedColors.length}');
+        });
+      }
+      nameController.dispose();
+    }
   }
 
   void _saveProduct() {
@@ -366,122 +448,6 @@ class _AddProductDialogState extends State<AddProductDialog> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ColorPickerDialog extends StatefulWidget {
-  final Function(String name, Color color) onColorSelected;
-
-  const _ColorPickerDialog({required this.onColorSelected});
-
-  @override
-  State<_ColorPickerDialog> createState() => _ColorPickerDialogState();
-}
-
-class _ColorPickerDialogState extends State<_ColorPickerDialog> {
-  final _nameController = TextEditingController();
-  Color _selectedColor = Colors.blue;
-
-  final List<Color> _predefinedColors = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.yellow,
-    Colors.orange,
-    Colors.purple,
-    Colors.pink,
-    Colors.brown,
-    Colors.grey,
-    Colors.black,
-    Colors.white,
-    Colors.cyan,
-    Colors.teal,
-    Colors.indigo,
-    Colors.lime,
-  ];
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        'Add Color',
-        style: AppTextStyle.getSemiBoldStyle(
-          color: AppColors.neutral900,
-          fontSize: 18.sp,
-        ),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CustomTextFormField(
-            controller: _nameController,
-            labelText: 'Color Name',
-            hintText: 'e.g., Red, Blue',
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'Select Color',
-            style: AppTextStyle.getMediumStyle(
-              color: AppColors.neutral700,
-              fontSize: 14.sp,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: _predefinedColors.map((color) {
-              final isSelected = _selectedColor == color;
-              return InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedColor = color;
-                  });
-                },
-                child: Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.neutral300,
-                      width: isSelected ? 3 : 2,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        CustomButton(
-          text: 'Add',
-          onPressed: () {
-            if (_nameController.text.isNotEmpty) {
-              widget.onColorSelected(_nameController.text, _selectedColor);
-              Navigator.pop(context);
-            }
-          },
-          w: 80.w,
-          h: 40.h,
-          radius: 8.r,
-        ),
-      ],
     );
   }
 }
