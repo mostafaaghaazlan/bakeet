@@ -2,6 +2,7 @@ import 'package:bakeet/core/constant/app_size/app_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
 import 'package:bakeet/features/marketplace/data/repository/marketplace_repository.dart';
 import 'package:bakeet/features/marketplace/data/model/product_model.dart';
@@ -96,7 +97,9 @@ class _CartScreenState extends State<CartScreen>
         builder: (context, state) {
           final count = cubit.items.length;
           return Text(
-            'Shopping Cart${count > 0 ? ' ($count)' : ''}',
+            count > 0
+                ? tr('shopping_cart_count', args: ['$count'])
+                : tr('shopping_cart'),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
           );
         },
@@ -109,7 +112,7 @@ class _CartScreenState extends State<CartScreen>
             return TextButton.icon(
               onPressed: () => _showClearDialog(context, cubit),
               icon: const Icon(Icons.delete_outline_rounded),
-              label: const Text('Clear'),
+              label: Text(tr('clear')),
               style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             );
           },
@@ -140,7 +143,7 @@ class _CartScreenState extends State<CartScreen>
             ),
             SizedBox(height: 24.h),
             Text(
-              'Your cart is empty',
+              tr('your_cart_is_empty'),
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
@@ -149,7 +152,7 @@ class _CartScreenState extends State<CartScreen>
             ),
             SizedBox(height: 12.h),
             Text(
-              'Add items to get started',
+              tr('add_items_to_start'),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16.sp, color: AppColors.neutral600),
             ),
@@ -157,7 +160,7 @@ class _CartScreenState extends State<CartScreen>
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.shopping_bag_outlined),
-              label: const Text('Start Shopping'),
+              label: Text(tr('start_shopping')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
@@ -198,13 +201,13 @@ class _CartScreenState extends State<CartScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               // Price Breakdown
-              _buildPriceRow('Subtotal', subtotal, false),
+              _buildPriceRow(tr('subtotal_label'), subtotal, false),
               SizedBox(height: 12.h),
-              _buildPriceRow('Shipping', shipping, false),
+              _buildPriceRow(tr('shipping_label'), shipping, false),
               if (discount > 0) ...[
                 SizedBox(height: 12.h),
                 _buildPriceRow(
-                  'Discount',
+                  tr('discount_label'),
                   -discount,
                   false,
                   color: AppColors.success,
@@ -214,7 +217,7 @@ class _CartScreenState extends State<CartScreen>
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 child: Divider(color: AppColors.neutral200, height: 1),
               ),
-              _buildPriceRow('Total', total, true),
+              _buildPriceRow(tr('total_label'), total, true),
               SizedBox(height: 20.h),
               // Checkout Button
               SizedBox(
@@ -239,7 +242,7 @@ class _CartScreenState extends State<CartScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Proceed to Checkout',
+                        tr('proceed_to_checkout'),
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -297,14 +300,12 @@ class _CartScreenState extends State<CartScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
         ),
-        title: const Text('Remove Item'),
-        content: const Text(
-          'Are you sure you want to remove this item from your cart?',
-        ),
+        title: Text(tr('remove_item')),
+        content: Text(tr('remove_item_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(tr('cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -312,7 +313,7 @@ class _CartScreenState extends State<CartScreen>
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Item removed from cart'),
+                  content: Text(tr('item_removed')),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -325,7 +326,7 @@ class _CartScreenState extends State<CartScreen>
               backgroundColor: AppColors.danger,
               foregroundColor: AppColors.white,
             ),
-            child: const Text('Remove'),
+            child: Text(tr('remove')),
           ),
         ],
       ),
@@ -339,14 +340,12 @@ class _CartScreenState extends State<CartScreen>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
         ),
-        title: const Text('Clear Cart'),
-        content: const Text(
-          'Are you sure you want to remove all items from your cart?',
-        ),
+        title: Text(tr('clear_cart')),
+        content: Text(tr('clear_cart_confirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(tr('cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -354,7 +353,7 @@ class _CartScreenState extends State<CartScreen>
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Cart cleared'),
+                  content: Text(tr('cart_cleared')),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -367,7 +366,7 @@ class _CartScreenState extends State<CartScreen>
               backgroundColor: AppColors.danger,
               foregroundColor: AppColors.white,
             ),
-            child: const Text('Clear All'),
+            child: Text(tr('clear_all')),
           ),
         ],
       ),

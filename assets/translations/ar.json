@@ -1090,6 +1090,10 @@
   "clear_all": "مسح الكل",
   "item_removed": "تم إزالة العنصر من السلة",
   "cart_cleared": "تم مسح السلة",
+  "subtotal_label": "المجموع الفرعي",
+  "shipping_label": "رسوم التوصيل",
+  "discount_label": "الخصم",
+  "total_label": "المجموع",
 
   "checkout": "الدفع",
   "cart_step": "السلة",

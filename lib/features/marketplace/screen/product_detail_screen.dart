@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:bakeet/features/marketplace/data/repository/marketplace_repository.dart';
 import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
@@ -179,12 +180,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           onPressed: () {
             setState(() => _isFavorite = !_isFavorite);
           },
-          tooltip: 'Add to Favorites',
+          tooltip: tr('add_to_favorites'),
         ),
         IconButton(
           icon: const Icon(Icons.share_rounded),
           onPressed: () {},
-          tooltip: 'Share',
+          tooltip: tr('share'),
         ),
         SizedBox(width: 8.w),
       ],
@@ -241,7 +242,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             ),
             SizedBox(height: 16.h),
             Text(
-              'Product not found',
+              tr('product_not_found'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -342,7 +343,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         _product!.availableColors!.isNotEmpty) ...[
                       SizedBox(height: 20.h),
                       Text(
-                        'Available Colors',
+                        tr('available_colors'),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -465,7 +466,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     SizedBox(height: 24.h),
                     // Description
                     Text(
-                      'Description',
+                      tr('product_description'),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -567,17 +568,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   Widget _buildFeaturesList() {
     final features = [
-      {'icon': Icons.verified_user_rounded, 'text': 'Authentic Product'},
-      {'icon': Icons.local_shipping_outlined, 'text': 'Fast Delivery'},
-      {'icon': Icons.replay_rounded, 'text': '7 Days Return'},
-      {'icon': Icons.payment_rounded, 'text': 'Secure Payment'},
+      {'icon': Icons.verified_user_rounded, 'text': tr('authentic_product')},
+      {'icon': Icons.local_shipping_outlined, 'text': tr('fast_delivery')},
+      {'icon': Icons.replay_rounded, 'text': tr('days_return')},
+      {'icon': Icons.payment_rounded, 'text': tr('secure_payment')},
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Why Buy From Us',
+          tr('why_buy_from_us'),
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
@@ -630,7 +631,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       child: Row(
         children: [
           Text(
-            'Quantity',
+            tr('quantity'),
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
@@ -708,7 +709,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Total Price',
+                  tr('total_price'),
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.neutral600,
@@ -745,7 +746,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     Icon(Icons.shopping_cart_rounded, size: 20.sp),
                     SizedBox(width: 8.w),
                     Text(
-                      'Add to Cart',
+                      tr('add_to_cart'),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
