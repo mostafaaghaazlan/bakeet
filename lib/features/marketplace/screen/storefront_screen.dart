@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bakeet/features/marketplace/cubit/storefront_cubit.dart';
@@ -184,7 +185,9 @@ class _StorefrontScreenState extends State<StorefrontScreen>
     try {
       final vendor = vendors.firstWhere((v) => v.id == widget.vendorId);
       print('✅ Found vendor: ${vendor.name}');
-      print('🎨 Vendor colors: Primary=${vendor.primaryColor.toARGB32()}, Secondary=${vendor.secondaryColor.toARGB32()}, Accent=${vendor.accentColor.toARGB32()}');
+      print(
+        '🎨 Vendor colors: Primary=${vendor.primaryColor.toARGB32()}, Secondary=${vendor.secondaryColor.toARGB32()}, Accent=${vendor.accentColor.toARGB32()}',
+      );
       print('🖼️ Banner: ${vendor.bannerUrl}');
       print('🖼️ Background: ${vendor.backgroundImageUrl}');
       print('🖼️ Logo: ${vendor.logoUrl}');
@@ -193,6 +196,21 @@ class _StorefrontScreenState extends State<StorefrontScreen>
       print('❌ Vendor not found: $e');
       print('📋 Available vendor IDs: ${vendors.map((v) => v.id).join(", ")}');
       return null;
+    }
+  }
+
+  String _categoryLabel(String cat) {
+    switch (cat) {
+      case 'All':
+        return tr('all');
+      case 'Popular':
+        return tr('popular');
+      case 'New Arrivals':
+        return tr('new_arrivals');
+      case 'Sale':
+        return tr('sale');
+      default:
+        return cat;
     }
   }
 
@@ -215,12 +233,12 @@ class _StorefrontScreenState extends State<StorefrontScreen>
         IconButton(
           icon: const Icon(Icons.search_rounded),
           onPressed: () {},
-          tooltip: 'Search',
+          tooltip: tr('search'),
         ),
         IconButton(
           icon: const Icon(Icons.share_rounded),
           onPressed: () {},
-          tooltip: 'Share',
+          tooltip: tr('share'),
         ),
         SizedBox(width: 8.w),
       ],
@@ -327,12 +345,12 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                             ),
                             _buildInfoChip(
                               Icons.inventory_2_outlined,
-                              '120+ Products',
+                              tr('products_count', args: ['120+']),
                               theme.primaryColor,
                             ),
                             _buildInfoChip(
                               Icons.local_shipping_outlined,
-                              'Fast',
+                              tr('fast'),
                               theme.accentColor,
                             ),
                           ],
@@ -393,8 +411,8 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               child: FilterChip(
-                label: Text(category),
                 selected: isSelected,
+                label: Text(_categoryLabel(category)),
                 onSelected: (selected) {
                   setState(() => _selectedCategory = category);
                 },
@@ -436,7 +454,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Products',
+                  tr('products'),
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
@@ -445,7 +463,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  '$count items available',
+                  tr('items_available', args: ['$count']),
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.neutral600,
@@ -456,7 +474,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             IconButton(
               icon: Icon(Icons.tune_rounded, size: 24.sp),
               onPressed: () {},
-              tooltip: 'Sort & Filter',
+              tooltip: tr('sort_and_filter'),
             ),
           ],
         ),
@@ -479,7 +497,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 ),
                 SizedBox(height: 16.h),
                 Text(
-                  'No products available',
+                  tr('no_products_available'),
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -564,7 +582,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             ),
             SizedBox(height: 16.h),
             Text(
-              'Oops! Something went wrong',
+              tr('oops_something_went_wrong'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -585,7 +603,7 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 );
               },
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
+              label: Text(tr('retry')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
@@ -647,7 +665,9 @@ class _StorefrontScreenState extends State<StorefrontScreen>
                 ),
             ],
           ),
-          label: Text(count > 0 ? 'View Cart ($count)' : 'Cart'),
+          label: Text(
+            count > 0 ? tr('view_cart_count', args: ['$count']) : tr('Cart'),
+          ),
         );
       },
     );
@@ -666,14 +686,14 @@ class _StorefrontScreenState extends State<StorefrontScreen>
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${product.title} added to cart'),
+        content: Text(tr('added_to_cart', args: [product.title])),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
         action: SnackBarAction(
-          label: 'View Cart',
+          label: tr('view_cart'),
           textColor: AppColors.white,
           onPressed: () {
             Navigator.push(

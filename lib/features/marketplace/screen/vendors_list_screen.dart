@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
@@ -129,7 +130,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
       backgroundColor: Colors.transparent,
       foregroundColor: AppColors.neutral900,
       title: Text(
-        'Explore Vendors',
+        tr('explore_vendors'),
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.sp),
       ),
       actions: [
@@ -141,12 +142,12 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           onPressed: () {
             setState(() => _isGridView = !_isGridView);
           },
-          tooltip: _isGridView ? 'List View' : 'Grid View',
+          tooltip: _isGridView ? tr('list_view') : tr('grid_view'),
         ),
         IconButton(
           icon: Icon(Icons.filter_list_rounded, size: 24.sp),
           onPressed: () => _showFilterBottomSheet(context),
-          tooltip: 'Filters',
+          tooltip: tr('filters'),
         ),
         SizedBox(width: 8.w),
       ],
@@ -174,7 +175,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
             setState(() => _searchQuery = value);
           },
           decoration: InputDecoration(
-            hintText: 'Search vendors...',
+            hintText: tr('search_vendors'),
             hintStyle: TextStyle(color: AppColors.neutral400, fontSize: 16.sp),
             prefixIcon: Icon(
               Icons.search_rounded,
@@ -219,7 +220,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           return AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             child: ChoiceChip(
-              label: Text(filter),
+              label: Text(tr(filter.toLowerCase())),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() => _selectedFilter = filter);
@@ -308,7 +309,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           Icon(Icons.store_outlined, size: 80.sp, color: AppColors.neutral400),
           SizedBox(height: 16.h),
           Text(
-            'No vendors found',
+            tr('no_vendors_found'),
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
@@ -317,7 +318,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           ),
           SizedBox(height: 8.h),
           Text(
-            'Try adjusting your search or filters',
+            tr('try_adjusting_filters'),
             style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
           ),
         ],
@@ -337,7 +338,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
           ),
           SizedBox(height: 16.h),
           Text(
-            'Oops! Something went wrong',
+            tr('oops_something_wrong'),
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
@@ -359,7 +360,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
               context.read<VendorsCubit>().loadVendors();
             },
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Retry'),
+            label: Text(tr('retry')),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.white,
@@ -392,7 +393,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Filters',
+                  tr('filters'),
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
@@ -407,7 +408,7 @@ class _VendorsListScreenState extends State<VendorsListScreen>
             ),
             SizedBox(height: 16.h),
             Text(
-              'Sort By',
+              tr('sort_by'),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,

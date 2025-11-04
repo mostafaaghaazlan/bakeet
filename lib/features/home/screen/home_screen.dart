@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bakeet/core/utils/Navigation/navigation.dart';
-import 'package:bakeet/features/marketplace/screen/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
 import 'package:bakeet/core/ui/widgets/logo_widget.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
@@ -48,6 +48,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'Crafts',
   ];
   String _selectedCategory = 'All';
+
+  String _catLabel(String cat) {
+    switch (cat) {
+      case 'All':
+        return tr('all');
+      case 'Furniture':
+        return tr('tag_furniture');
+      case 'Home':
+        return tr('category_home');
+      case 'Clothing':
+        return tr('tag_clothing');
+      case 'Decor':
+        return tr('tag_decor');
+      case 'Crafts':
+        return tr('crafts');
+      default:
+        return cat;
+    }
+  }
 
   @override
   void initState() {
@@ -175,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           SizedBox(width: 12.w),
           Text(
-            'Bakeet',
+            tr('app_name_arabic'),
             style: TextStyle(
               color: AppColors.neutral400,
               fontWeight: FontWeight.bold,
@@ -189,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.notifications_outlined),
-          tooltip: 'Notifications',
+          tooltip: tr('notifications'),
         ),
         Stack(
           children: [
@@ -198,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 Navigation.push(VendorRegistrationScreen());
               },
               icon: const Icon(Icons.add),
-              tooltip: 'Added vendor',
+              tooltip: tr('become_vendor'),
             ),
             Positioned(
               right: 8,
@@ -294,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               child: FilterChip(
-                label: Text(category),
+                label: Text(_catLabel(category)),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() => _selectedCategory = category);
@@ -350,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Icon(Icons.flash_on, color: AppColors.white, size: 20.sp),
                       SizedBox(width: 4.w),
                       Text(
-                        'Flash Deals',
+                        tr('flash_deals'),
                         style: TextStyle(
                           color: AppColors.white,
                           fontWeight: FontWeight.bold,
@@ -404,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Top Vendors',
+                      tr('top_vendors'),
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -413,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      'Trusted by thousands',
+                      tr('trusted_by_thousands'),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: AppColors.neutral600,
@@ -428,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       builder: (_) => const VendorsListScreen(),
                     ),
                   ),
-                  icon: const Text('View all'),
+                  icon: Text(tr('view_all')),
                   label: const Icon(Icons.arrow_forward_rounded, size: 20),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.primary,
@@ -501,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               // mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Trending Products',
+                  tr('trending_products'),
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
@@ -510,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  'Handpicked for you',
+                  tr('handpicked_for_you'),
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.neutral600,
@@ -551,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            'No products found',
+                            tr('no_products_found'),
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: AppColors.neutral600,
@@ -681,7 +700,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 // Optional: Add debounced search here
               },
               decoration: InputDecoration(
-                hintText: 'Search for products, vendors...',
+                hintText: tr('search_products'),
                 hintStyle: TextStyle(
                   fontSize: 15.sp,
                   color: AppColors.neutral400,
@@ -743,7 +762,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    'Filter results',
+                                    tr('filter_results'),
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
@@ -772,7 +791,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                     BorderRadius.circular(12.r),
                                               ),
                                             ),
-                                            child: Text(f),
+                                            child: Text(tr(f.toLowerCase())),
                                           );
                                         })
                                         .toList(),
@@ -866,7 +885,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           context,
           MaterialPageRoute(builder: (_) => const VendorsListScreen()),
         ),
-        label: const Text('Explore'),
+        label: const Text('explore_vendors').tr(),
         icon: const Icon(Icons.explore_outlined),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -1403,7 +1422,7 @@ class _FlashDealCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
-                    'UP TO 50% OFF',
+                    tr('up_to_50_off'),
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 10.sp,
@@ -1638,7 +1657,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Search Results',
+                  tr('search_results'),
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
@@ -1648,7 +1667,13 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
                 SizedBox(height: 4.h),
                 if (!_isLoading)
                   Text(
-                    '${_matchedProducts.length + _matchedVendors.length} results for "${widget.query}"',
+                    tr(
+                      'results_for_query',
+                      args: [
+                        '${_matchedProducts.length + _matchedVendors.length}',
+                        widget.query,
+                      ],
+                    ),
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.neutral600,
@@ -1798,7 +1823,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
           ),
           SizedBox(height: 8.h),
           Text(
-            'Please wait while we find the best results',
+            tr('please_wait_search'),
             style: TextStyle(fontSize: 14.sp, color: AppColors.neutral600),
           ),
         ],
@@ -1827,7 +1852,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
             ),
             SizedBox(height: 24.h),
             Text(
-              'No results found',
+              tr('no_results_found'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -1844,7 +1869,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: Icon(Icons.refresh_rounded),
-              label: Text('Try another search'),
+              label: Text(tr('try_another_search')),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,

@@ -14,10 +14,10 @@ class MarketplaceRepository {
   final List<VendorModel> _vendors = [
     VendorModel(
       id: 'v01',
-      name: 'Baghdad Bazaar',
+      name: 'بازار بغداد',
       logoUrl: 'https://picsum.photos/seed/v01-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v01-banner/1200/400',
-      tagline: 'Traditional crafts & homeware',
+      tagline: 'حرف تقليدية وأدوات منزلية',
       primaryColor: const Color(0xFFB91C1C), // warm red
       secondaryColor: const Color(0xFFEF4444),
       accentColor: const Color(0xFFFECACA),
@@ -29,10 +29,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v02',
-      name: 'Erbil Studio',
+      name: 'استوديو أربيل',
       logoUrl: 'https://picsum.photos/seed/v02-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v02-banner/1200/400',
-      tagline: 'Modern design & furniture',
+      tagline: 'تصميم عصري وأثاث',
       primaryColor: const Color(0xFF6366F1),
       secondaryColor: const Color(0xFF4F46E5),
       accentColor: const Color(0xFF818CF8),
@@ -44,10 +44,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v03',
-      name: 'Mosul Handworks',
+      name: 'حرفيات الموصل',
       logoUrl: 'https://picsum.photos/seed/v03-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v03-banner/1200/400',
-      tagline: 'Artisan rugs & textiles',
+      tagline: 'سجاد ومنسوجات حرفية',
       primaryColor: const Color(0xFF92400E),
       secondaryColor: const Color(0xFFEA580C),
       accentColor: const Color(0xFFFDE68A),
@@ -59,10 +59,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v04',
-      name: 'Basra Spice House',
+      name: 'بيت البصرة للبهارات',
       logoUrl: 'https://picsum.photos/seed/v04-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v04-banner/1200/400',
-      tagline: 'Fine spices & blends',
+      tagline: 'بهارات فاخرة ومخلوطات',
       primaryColor: const Color(0xFF92400E),
       secondaryColor: const Color(0xFFB45309),
       accentColor: const Color(0xFFFDE68A),
@@ -74,10 +74,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v05',
-      name: 'Nineveh Antiques',
+      name: 'تحف نينوى',
       logoUrl: 'https://picsum.photos/seed/v05-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v05-banner/1200/400',
-      tagline: 'Curated vintage pieces',
+      tagline: 'قطع عتيقة مختارة',
       primaryColor: const Color(0xFF854D0E),
       secondaryColor: const Color(0xFF7C2D12),
       accentColor: const Color(0xFFFDE68A),
@@ -89,10 +89,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v06',
-      name: 'Kurdish Loom',
+      name: 'نول كردستان',
       logoUrl: 'https://picsum.photos/seed/v06-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v06-banner/1200/400',
-      tagline: 'Handwoven textiles & scarves',
+      tagline: 'منسوجات وأوشحة منسوجة يدوياً',
       primaryColor: const Color(0xFF0EA5A4),
       secondaryColor: const Color(0xFF0891B2),
       accentColor: const Color(0xFF67E8F9),
@@ -104,10 +104,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v07',
-      name: 'Tigris Books',
+      name: 'مكتبة دجلة',
       logoUrl: 'https://picsum.photos/seed/v07-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v07-banner/1200/400',
-      tagline: 'Local authors & English imports',
+      tagline: 'مؤلفون محليون وكتب مستوردة',
       primaryColor: const Color(0xFF065F46),
       secondaryColor: const Color(0xFF10B981),
       accentColor: const Color(0xFFA7F3D0),
@@ -119,10 +119,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v08',
-      name: 'Ziggurat Decor',
+      name: 'ديكور الزقورة',
       logoUrl: 'https://picsum.photos/seed/v08-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v08-banner/1200/400',
-      tagline: 'Contemporary home accents',
+      tagline: 'إكسسوارات منزلية معاصرة',
       primaryColor: const Color(0xFF111827),
       secondaryColor: const Color(0xFF374151),
       accentColor: const Color(0xFF9CA3AF),
@@ -134,10 +134,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v09',
-      name: 'Sulaymaniyah Styles',
+      name: 'أزياء السليمانية',
       logoUrl: 'https://picsum.photos/seed/v09-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v09-banner/1200/400',
-      tagline: 'Urban fashion & streetwear',
+      tagline: 'موضة حضرية وملابس الشارع',
       primaryColor: const Color(0xFF0EA5A4),
       secondaryColor: const Color(0xFF06B6D4),
       accentColor: const Color(0xFFBAE6FD),
@@ -149,10 +149,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v10',
-      name: 'Diyala Delights',
+      name: 'لذائذ ديالى',
       logoUrl: 'https://picsum.photos/seed/v10-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v10-banner/1200/400',
-      tagline: 'Gourmet sweets & pastries',
+      tagline: 'حلويات ومعجنات فاخرة',
       primaryColor: const Color(0xFFB91C1C),
       secondaryColor: const Color(0xFFF97316),
       accentColor: const Color(0xFFFECACA),
@@ -164,10 +164,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v11',
-      name: 'Karbala Ceramics',
+      name: 'خزفيات كربلاء',
       logoUrl: 'https://picsum.photos/seed/v11-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v11-banner/1200/400',
-      tagline: 'Handmade pottery & kitchenware',
+      tagline: 'فخار وأدوات مطبخ يدوية الصنع',
       primaryColor: const Color(0xFF92400E),
       secondaryColor: const Color(0xFFDC2626),
       accentColor: const Color(0xFFFDE68A),
@@ -179,10 +179,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v12',
-      name: 'Iraq Tech Store',
+      name: 'متجر العراق للتكنولوجيا',
       logoUrl: 'https://picsum.photos/seed/v12-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v12-banner/1200/400',
-      tagline: 'Gadgets & accessories',
+      tagline: 'أجهزة وإكسسوارات',
       primaryColor: const Color(0xFF0EA5A4),
       secondaryColor: const Color(0xFF0284C7),
       accentColor: const Color(0xFFBAE6FD),
@@ -194,10 +194,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v13',
-      name: 'Mahmoud\'s Sweets',
+      name: 'حلويات محمود',
       logoUrl: 'https://picsum.photos/seed/v13-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v13-banner/1200/400',
-      tagline: 'Traditional desserts & snacks',
+      tagline: 'حلويات ووجبات خفيفة تقليدية',
       primaryColor: const Color(0xFFEF4444),
       secondaryColor: const Color(0xFFF97316),
       accentColor: const Color(0xFFFDE68A),
@@ -209,10 +209,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v14',
-      name: 'Erbil Electronics',
+      name: 'إلكترونيات أربيل',
       logoUrl: 'https://picsum.photos/seed/v14-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v14-banner/1200/400',
-      tagline: 'Home appliances & electronics',
+      tagline: 'أجهزة منزلية وإلكترونيات',
       primaryColor: const Color(0xFF0F172A),
       secondaryColor: const Color(0xFF1F2937),
       accentColor: const Color(0xFF9CA3AF),
@@ -224,10 +224,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v15',
-      name: 'Basra Oils',
+      name: 'زيوت البصرة',
       logoUrl: 'https://picsum.photos/seed/v15-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v15-banner/1200/400',
-      tagline: 'Premium olive oils & condiments',
+      tagline: 'زيوت زيتون فاخرة وتوابل',
       primaryColor: const Color(0xFF065F46),
       secondaryColor: const Color(0xFF10B981),
       accentColor: const Color(0xFFA7F3D0),
@@ -239,10 +239,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v16',
-      name: 'Baghdad Bites',
+      name: 'لقيمات بغداد',
       logoUrl: 'https://picsum.photos/seed/v16-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v16-banner/1200/400',
-      tagline: 'Street food & ready meals',
+      tagline: 'طعام الشارع ووجبات جاهزة',
       primaryColor: const Color(0xFFEF4444),
       secondaryColor: const Color(0xFFEA580C),
       accentColor: const Color(0xFFFDE68A),
@@ -254,10 +254,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v17',
-      name: 'Handmade by Hiba',
+      name: 'صناعة هبة اليدوية',
       logoUrl: 'https://picsum.photos/seed/v17-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v17-banner/1200/400',
-      tagline: 'Jewelry & small gifts',
+      tagline: 'مجوهرات وهدايا صغيرة',
       primaryColor: const Color(0xFF7C3AED),
       secondaryColor: const Color(0xFF6D28D9),
       accentColor: const Color(0xFFEDE9FE),
@@ -269,10 +269,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v18',
-      name: 'Mosul Motors',
+      name: 'موتورات الموصل',
       logoUrl: 'https://picsum.photos/seed/v18-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v18-banner/1200/400',
-      tagline: 'Auto parts & accessories',
+      tagline: 'قطع غيار وإكسسوارات سيارات',
       primaryColor: const Color(0xFF111827),
       secondaryColor: const Color(0xFF374151),
       accentColor: const Color(0xFF9CA3AF),
@@ -284,10 +284,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v19',
-      name: 'Samarra Silver',
+      name: 'فضيات سامراء',
       logoUrl: 'https://picsum.photos/seed/v19-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v19-banner/1200/400',
-      tagline: 'Silverware & ornaments',
+      tagline: 'فضيات وزينة',
       primaryColor: const Color(0xFF6366F1),
       secondaryColor: const Color(0xFF4338CA),
       accentColor: const Color(0xFFEDE9FE),
@@ -299,10 +299,10 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v20',
-      name: 'Erbil Eco Goods',
+      name: 'منتجات أربيل الصديقة للبيئة',
       logoUrl: 'https://picsum.photos/seed/v20-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v20-banner/1200/400',
-      tagline: 'Eco-friendly household items',
+      tagline: 'منتجات منزلية صديقة للبيئة',
       primaryColor: const Color(0xFF16A34A),
       secondaryColor: const Color(0xFF4ADE80),
       accentColor: const Color(0xFFD1FAE5),
