@@ -51,8 +51,8 @@ class MyApp extends StatelessWidget {
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
-            // Launch to the main shell with bottom navigation
-            home: const MainShell(),
+            // Launch to login screen first
+            home: const LoginScreen(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
@@ -120,18 +120,90 @@ class _MainShellState extends State<MainShell> {
 
     return Scaffold(
       body: pages[_currentIndex],
+      extendBody: true,
       bottomNavigationBar: _currentIndex == 1
           ? null // Hide bottom nav when on ReelsScreen
-          : BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: _onTap,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.layers),
-                  label: 'Second',
+          : Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: _currentIndex,
+                  onTap: _onTap,
+                  type: BottomNavigationBarType.fixed,
+                  backgroundColor: Colors.white,
+                  selectedItemColor: AppColors.primary,
+                  unselectedItemColor: AppColors.neutral600,
+                  selectedFontSize: 12,
+                  unselectedFontSize: 11,
+                  elevation: 0,
+                  selectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: _currentIndex == 0
+                            ? BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary.withValues(alpha: 0.1),
+                                    AppColors.secondary.withValues(alpha: 0.1),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              )
+                            : null,
+                        child: Icon(
+                          _currentIndex == 0 ? Icons.home : Icons.home_outlined,
+                          size: 26,
+                        ),
+                      ),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: _currentIndex == 1
+                            ? BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary.withValues(alpha: 0.1),
+                                    AppColors.secondary.withValues(alpha: 0.1),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              )
+                            : null,
+                        child: Icon(
+                          _currentIndex == 1
+                              ? Icons.play_circle
+                              : Icons.play_circle_outline,
+                          size: 26,
+                        ),
+                      ),
+                      label: 'Reels',
+                    ),
+                  ],
+                ),
+              ),
             ),
     );
   }

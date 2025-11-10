@@ -7,7 +7,7 @@ import 'package:bakeet/core/constant/text_styles/app_text_style.dart';
 import 'package:bakeet/core/ui/widgets/custom_text_form_field.dart';
 import 'package:bakeet/core/ui/widgets/custom_button.dart';
 import 'package:bakeet/features/auth/cubit/auth_cubit.dart';
-import 'package:bakeet/features/home/screen/home_screen.dart';
+import 'package:bakeet/main.dart';
 import 'package:bakeet/features/vendor managment/screen/vendor_registration_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -56,13 +56,10 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
       curve: Curves.easeInOut,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
     _slideController.forward();
@@ -110,11 +107,9 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
               ),
             );
           } else {
-            // Navigate to HomeScreen for regular users
+            // Navigate to MainShell for regular users
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => const HomeScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const MainShell()),
             );
           }
         } else if (state is AuthError) {
@@ -149,10 +144,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
           child: SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 24.w,
-                  vertical: 20.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: SlideTransition(
@@ -237,11 +229,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
               ),
             ],
           ),
-          child: Icon(
-            Icons.lock_rounded,
-            color: Colors.white,
-            size: 40.sp,
-          ),
+          child: Icon(Icons.lock_rounded, color: Colors.white, size: 40.sp),
         ),
         SizedBox(height: 24.h),
         Text(
@@ -297,8 +285,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
   Widget _buildPasswordField() {
     return BlocBuilder<AuthCubit, AuthState>(
       buildWhen: (previous, current) =>
-          current is AuthPasswordVisibilityChanged ||
-          current is AuthInitial,
+          current is AuthPasswordVisibilityChanged || current is AuthInitial,
       builder: (context, state) {
         final cubit = context.read<AuthCubit>();
         return CustomTextFormField(
@@ -448,12 +435,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
   Widget _buildDivider() {
     return Row(
       children: [
-        Expanded(
-          child: Divider(
-            color: AppColors.greyDD,
-            thickness: 1,
-          ),
-        ),
+        Expanded(child: Divider(color: AppColors.greyDD, thickness: 1)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
@@ -464,12 +446,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
             ),
           ),
         ),
-        Expanded(
-          child: Divider(
-            color: AppColors.greyDD,
-            thickness: 1,
-          ),
-        ),
+        Expanded(child: Divider(color: AppColors.greyDD, thickness: 1)),
       ],
     );
   }
@@ -548,10 +525,7 @@ class _SocialButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: AppColors.greyDD,
-            width: 1.5,
-          ),
+          border: Border.all(color: AppColors.greyDD, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -561,11 +535,7 @@ class _SocialButton extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Icon(
-            icon,
-            color: color,
-            size: 28.sp,
-          ),
+          child: Icon(icon, color: color, size: 28.sp),
         ),
       ),
     );

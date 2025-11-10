@@ -29,10 +29,11 @@ class AuthCubit extends Cubit<AuthState> {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
 
-      // TODO: Replace with actual authentication logic
-      // Example: await authRepository.login(email, password);
-
-      if (email.isNotEmpty && password.length >= 6) {
+      // Check for specific test user
+      if (email.toLowerCase() == 'user@gmail.com' && password.length >= 6) {
+        // Regular user - navigate to MainShell
+        emit(AuthLoginSuccess(email, isMerchant: false));
+      } else if (email.isNotEmpty && password.length >= 6) {
         // Check if email contains "merchant" to determine user type
         final isMerchant = email.toLowerCase().contains('merchant');
         emit(AuthLoginSuccess(email, isMerchant: isMerchant));
