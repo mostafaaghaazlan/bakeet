@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bakeet/core/utils/Navigation/navigation.dart';
+import 'package:bakeet/features/marketplace/screen/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -19,8 +20,6 @@ import 'package:bakeet/features/marketplace/cubit/storefront_cubit.dart';
 import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
 import 'package:bakeet/core/di/injection.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../vendor managment/screen/vendor_registration_screen.dart';
 
 /// A stunning, modern e-commerce home page with advanced animations and beautiful design
 class HomeScreen extends StatefulWidget {
@@ -214,10 +213,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                Navigation.push(VendorRegistrationScreen());
+                Navigation.push(CartScreen());
               },
-              icon: const Icon(Icons.add),
-              tooltip: tr('become_vendor'),
+              icon: const Icon(Icons.shopping_bag),
+              tooltip: tr('cart_screen'),
             ),
             Positioned(
               right: 8,

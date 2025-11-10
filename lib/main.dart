@@ -1,3 +1,4 @@
+import 'package:bakeet/features/auth/screen/login_screen.dart';
 import 'package:bakeet/features/home/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +8,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'core/constant/app_colors/app_colors.dart';
 import 'core/classes/keys.dart';
 import 'core/di/injection.dart';
-import 'package:bakeet/features/home/screen/home_screen.dart';
-
 import 'features/vendor managment/cubit/v_vendor_managment_cubit.dart';
 
 void main() async {
@@ -51,7 +50,7 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             // Launch to the modern e-commerce HomeScreen
-            home: HomeScreen(),
+            home: LoginScreen(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
