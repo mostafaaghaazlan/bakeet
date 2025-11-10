@@ -54,49 +54,57 @@ class _ReelsScreenState extends State<ReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // Video PageView
-          PageView.builder(
-            controller: _pageController,
-            scrollDirection: Axis.vertical,
-            itemCount: _videoUrls.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              return ReelItem(
-                videoUrl: _videoUrls[index],
-                isCurrentPage: index == _currentPage,
-                vendor: _vendorsLoaded && _vendors.isNotEmpty
-                    ? _vendors[index % _vendors.length]
-                    : null,
-              );
-            },
-          ),
-          // Back Button (Top-left)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 10,
-            child: SafeArea(
-              child: IconButton(
-                onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 28,
-                ),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.black.withOpacity(0.3),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && widget.onBack != null) {
+          widget.onBack!();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            // Video PageView
+            PageView.builder(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: _videoUrls.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return ReelItem(
+                  videoUrl: _videoUrls[index],
+                  isCurrentPage: index == _currentPage,
+                  vendor: _vendorsLoaded && _vendors.isNotEmpty
+                      ? _vendors[index % _vendors.length]
+                      : null,
+                );
+              },
+            ),
+            // Back Button (Top-left)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 10,
+              left: 10,
+              child: SafeArea(
+                child: IconButton(
+                  onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black.withOpacity(0.3),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
