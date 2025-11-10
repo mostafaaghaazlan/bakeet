@@ -25,10 +25,11 @@ class ProductVideoPlayer extends StatefulWidget {
 }
 
 class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   bool _isInitialized = false;
   bool _hasError = false;
   bool _showControls = false;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -47,27 +48,27 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
         _controller = VideoPlayerController.asset(widget.videoUrl);
       }
 
-      await _controller.initialize();
+      await _controller!.initialize();
 
-      if (mounted) {
+      if (!_isDisposed && mounted) {
         setState(() {
           _isInitialized = true;
         });
 
         // Mute the video by default (Reels-style)
-        _controller.setVolume(0.0);
+        _controller!.setVolume(0.0);
 
         // Set looping for Reels-style continuous play
-        _controller.setLooping(true);
+        _controller!.setLooping(true);
 
         // Auto-play if enabled
         if (widget.autoPlay) {
-          _controller.play();
+          _controller!.play();
         }
       }
     } catch (e) {
       print('Error initializing video: $e');
-      if (mounted) {
+      if (!_isDisposed && mounted) {
         setState(() {
           _hasError = true;
         });
@@ -77,29 +78,34 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _isDisposed = true;
+    _controller?.dispose();
     super.dispose();
   }
 
   void _togglePlayPause() {
+    if (_controller == null || _isDisposed) return;
+
     setState(() {
-      if (_controller.value.isPlaying) {
-        _controller.pause();
+      if (_controller!.value.isPlaying) {
+        _controller!.pause();
       } else {
-        _controller.play();
+        _controller!.play();
       }
     });
   }
 
   void _handleVisibilityChanged(VisibilityInfo info) {
+    if (_controller == null || _isDisposed) return;
+
     // Auto-play when 50% visible, pause when less than 50% visible
     if (info.visibleFraction > 0.5) {
-      if (!_controller.value.isPlaying && widget.autoPlay) {
-        _controller.play();
+      if (!_controller!.value.isPlaying && widget.autoPlay) {
+        _controller!.play();
       }
     } else {
-      if (_controller.value.isPlaying) {
-        _controller.pause();
+      if (_controller!.value.isPlaying) {
+        _controller!.pause();
       }
     }
   }
@@ -128,7 +134,7 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
                     });
                     // Auto-hide controls after 3 seconds
                     Future.delayed(const Duration(seconds: 3), () {
-                      if (mounted) {
+                      if (!_isDisposed && mounted) {
                         setState(() {
                           _showControls = false;
                         });
@@ -140,15 +146,17 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
                 child: FittedBox(
                   fit: BoxFit.cover,
                   child: SizedBox(
-                    width: _controller.value.size.width,
-                    height: _controller.value.size.height,
-                    child: VideoPlayer(_controller),
+                    width: _controller!.value.size.width,
+                    height: _controller!.value.size.height,
+                    child: VideoPlayer(_controller!),
                   ),
                 ),
               ),
 
             // Play/Pause overlay
-            if (_isInitialized && !_controller.value.isPlaying)
+            if (_isInitialized &&
+                _controller != null &&
+                !_controller!.value.isPlaying)
               Center(
                 child: Container(
                   padding: EdgeInsets.all(16.r),
@@ -197,13 +205,13 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
             ),
 
             // Progress indicator (bottom)
-            if (_isInitialized)
+            if (_isInitialized && _controller != null)
               Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 child: VideoProgressIndicator(
-                  _controller,
+                  _controller!,
                   allowScrubbing: true,
                   colors: VideoProgressColors(
                     playedColor: AppColors.primary,
@@ -217,17 +225,22 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
               ),
 
             // Mute/Unmute button (optional, if controls are shown)
-            if (_isInitialized && _showControls && widget.showControls)
+            if (_isInitialized &&
+                _showControls &&
+                widget.showControls &&
+                _controller != null)
               Positioned(
                 top: 8.h,
                 right: 8.w,
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      _controller.setVolume(
-                        _controller.value.volume > 0 ? 0.0 : 1.0,
-                      );
-                    });
+                    if (_controller != null && !_isDisposed) {
+                      setState(() {
+                        _controller!.setVolume(
+                          _controller!.value.volume > 0 ? 0.0 : 1.0,
+                        );
+                      });
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.all(8.r),
@@ -236,7 +249,7 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      _controller.value.volume > 0
+                      _controller!.value.volume > 0
                           ? Icons.volume_up_rounded
                           : Icons.volume_off_rounded,
                       color: AppColors.white,

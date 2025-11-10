@@ -131,6 +131,7 @@ class _ReelItemState extends State<ReelItem> {
   bool _isInitialized = false;
   bool _isLiked = false;
   bool _isFollowing = false;
+  bool _addedToCart = false;
 
   @override
   void initState() {
@@ -283,6 +284,60 @@ class _ReelItemState extends State<ReelItem> {
                 label: 'Share',
                 onTap: () {
                   // Visual only - no action
+                },
+              ),
+              const SizedBox(height: 25),
+
+              // Add to Cart Button
+              _buildActionButton(
+                icon: _addedToCart
+                    ? Icons.shopping_cart
+                    : Icons.shopping_cart_outlined,
+                label: _addedToCart ? 'Added' : 'Cart',
+                color: _addedToCart ? Colors.green : Colors.white,
+                onTap: () {
+                  setState(() {
+                    _addedToCart = true;
+                  });
+                  // Show snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            widget.vendor != null
+                                ? 'Added ${widget.vendor!.name} product to cart!'
+                                : 'Added to cart!',
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      margin: const EdgeInsets.only(
+                        bottom: 80,
+                        left: 20,
+                        right: 20,
+                      ),
+                    ),
+                  );
+                  // Reset after 3 seconds
+                  Future.delayed(const Duration(seconds: 3), () {
+                    if (mounted) {
+                      setState(() {
+                        _addedToCart = false;
+                      });
+                    }
+                  });
                 },
               ),
               const SizedBox(height: 25),
