@@ -102,28 +102,37 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  static final List<Widget> _pages = <Widget>[
-    // Use the real HomeScreen as the first tab
-    const HomeScreen(),
-    ReelsScreen(),
-  ];
-
   void _onTap(int index) {
     setState(() => _currentIndex = index);
   }
 
+  void _goToHome() {
+    setState(() => _currentIndex = 0);
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Create pages list here to pass the callback
+    final List<Widget> pages = <Widget>[
+      const HomeScreen(),
+      ReelsScreen(onBack: _goToHome),
+    ];
+
     return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTap,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.layers), label: 'Second'),
-        ],
-      ),
+      body: pages[_currentIndex],
+      bottomNavigationBar: _currentIndex == 1
+          ? null // Hide bottom nav when on ReelsScreen
+          : BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: _onTap,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.layers),
+                  label: 'Second',
+                ),
+              ],
+            ),
     );
   }
 }

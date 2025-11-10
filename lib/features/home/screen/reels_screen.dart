@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class ReelsScreen extends StatefulWidget {
-  const ReelsScreen({super.key});
+  final VoidCallback? onBack;
+
+  const ReelsScreen({super.key, this.onBack});
 
   @override
   State<ReelsScreen> createState() => _ReelsScreenState();
@@ -36,21 +38,44 @@ class _ReelsScreenState extends State<ReelsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: PageView.builder(
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        itemCount: _videoUrls.length,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          return ReelItem(
-            videoUrl: _videoUrls[index],
-            isCurrentPage: index == _currentPage,
-          );
-        },
+      body: Stack(
+        children: [
+          // Video PageView
+          PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.vertical,
+            itemCount: _videoUrls.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return ReelItem(
+                videoUrl: _videoUrls[index],
+                isCurrentPage: index == _currentPage,
+              );
+            },
+          ),
+          // Back Button (Top-left)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 10,
+            child: SafeArea(
+              child: IconButton(
+                onPressed: widget.onBack ?? () => Navigator.of(context).pop(),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.black.withOpacity(0.3),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
