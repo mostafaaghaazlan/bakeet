@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:bakeet/features/marketplace/data/repository/marketplace_repository.dart';
+import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 
 class ReelsScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -13,6 +15,8 @@ class ReelsScreen extends StatefulWidget {
 class _ReelsScreenState extends State<ReelsScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  List<VendorModel> _vendors = [];
+  bool _vendorsLoaded = false;
 
   // Local video assets from assets/videos/
   final List<String> _videoUrls = [
@@ -27,6 +31,20 @@ class _ReelsScreenState extends State<ReelsScreen> {
     'assets/videos/v9.mp4',
     'assets/videos/video.mp4',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVendors();
+  }
+
+  Future<void> _loadVendors() async {
+    final vendors = await MarketplaceRepository().getVendors();
+    setState(() {
+      _vendors = vendors;
+      _vendorsLoaded = true;
+    });
+  }
 
   @override
   void dispose() {
@@ -54,6 +72,9 @@ class _ReelsScreenState extends State<ReelsScreen> {
               return ReelItem(
                 videoUrl: _videoUrls[index],
                 isCurrentPage: index == _currentPage,
+                vendor: _vendorsLoaded && _vendors.isNotEmpty
+                    ? _vendors[index % _vendors.length]
+                    : null,
               );
             },
           ),
@@ -84,11 +105,13 @@ class _ReelsScreenState extends State<ReelsScreen> {
 class ReelItem extends StatefulWidget {
   final String videoUrl;
   final bool isCurrentPage;
+  final VendorModel? vendor;
 
   const ReelItem({
     super.key,
     required this.videoUrl,
     required this.isCurrentPage,
+    this.vendor,
   });
 
   @override
@@ -187,8 +210,11 @@ class _ReelItemState extends State<ReelItem> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
-                      image: const DecorationImage(
-                        image: NetworkImage('https://i.pravatar.cc/150?img=3'),
+                      image: DecorationImage(
+                        image: widget.vendor != null
+                            ? AssetImage(widget.vendor!.logoUrl)
+                            : const AssetImage('assets/images/placeholder.png')
+                                  as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -276,9 +302,11 @@ class _ReelItemState extends State<ReelItem> {
               // Username
               Row(
                 children: [
-                  const Text(
-                    '@username',
-                    style: TextStyle(
+                  Text(
+                    widget.vendor != null
+                        ? '@${widget.vendor!.name}'
+                        : '@username',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -315,9 +343,11 @@ class _ReelItemState extends State<ReelItem> {
               const SizedBox(height: 8),
 
               // Caption
-              const Text(
-                'This is an amazing video! 🔥 Check out this incredible content #viral #trending',
-                style: TextStyle(color: Colors.white, fontSize: 14),
+              Text(
+                widget.vendor != null
+                    ? '${widget.vendor!.tagline} 🔥 #viral #trending'
+                    : 'This is an amazing video! 🔥 Check out this incredible content #viral #trending',
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
