@@ -10,26 +10,31 @@ class StorefrontCubit extends Cubit<StorefrontState> {
 
   Future<void> loadProductsForVendor(String vendorId) async {
     try {
+      if (isClosed) return;
       emit(StorefrontLoading());
       final products = await repository.getProductsByVendor(vendorId);
+      if (isClosed) return;
       emit(StorefrontLoaded(products));
     } catch (e) {
-      emit(StorefrontError(e.toString()));
+      if (!isClosed) emit(StorefrontError(e.toString()));
     }
   }
 
   Future<void> loadAllProducts() async {
     try {
+      if (isClosed) return;
       emit(StorefrontLoading());
       final vendors = await repository.getVendors();
       final List<dynamic> allProducts = [];
       for (final vendor in vendors) {
+        if (isClosed) return;
         final products = await repository.getProductsByVendor(vendor.id);
         allProducts.addAll(products);
       }
+      if (isClosed) return;
       emit(StorefrontLoaded(allProducts));
     } catch (e) {
-      emit(StorefrontError(e.toString()));
+      if (!isClosed) emit(StorefrontError(e.toString()));
     }
   }
 }

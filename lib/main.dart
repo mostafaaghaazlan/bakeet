@@ -1,5 +1,7 @@
 import 'package:bakeet/features/auth/screen/login_screen.dart';
 import 'package:bakeet/features/home/cubit/home_cubit.dart';
+import 'package:bakeet/features/home/screen/home_screen.dart';
+import 'package:bakeet/features/home/screen/reels_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,9 +51,8 @@ class MyApp extends StatelessWidget {
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
-            // Launch to the modern e-commerce HomeScreen
-            home: LoginScreen(),
-            // home: HomeScreen(),
+            // Launch to the main shell with bottom navigation
+            home: const MainShell(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
@@ -85,6 +86,43 @@ class MyApp extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// MainShell hosts the bottom navigation and two pages (Home, Second)
+class MainShell extends StatefulWidget {
+  const MainShell({super.key});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  int _currentIndex = 0;
+
+  static final List<Widget> _pages = <Widget>[
+    // Use the real HomeScreen as the first tab
+    const HomeScreen(),
+    ReelsScreen(),
+  ];
+
+  void _onTap(int index) {
+    setState(() => _currentIndex = index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTap,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.layers), label: 'Second'),
+        ],
       ),
     );
   }
