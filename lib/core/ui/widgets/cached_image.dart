@@ -20,6 +20,7 @@ class CachedImage extends StatelessWidget {
   final String? fallbackPlaceHolder;
   final bool removeOnDispose;
   final bool isZoomable;
+  final bool preferAsset;
 
   const CachedImage({
     super.key,
@@ -35,11 +36,13 @@ class CachedImage extends StatelessWidget {
     this.fallbackPlaceHolder,
     this.removeOnDispose = true,
     this.isZoomable = false,
+    this.preferAsset = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Check if imageUrl is a local file path or a network URL
+    // Check if imageUrl is an asset path, a local file path, or a network URL
+    final bool isAsset = imageUrl != null && imageUrl!.startsWith('assets/');
     final bool isLocalFile =
         imageUrl != null &&
         (imageUrl!.startsWith('/') ||
@@ -49,7 +52,61 @@ class CachedImage extends StatelessWidget {
 
     Widget imageWidget;
 
-    if (isLocalFile) {
+    if (isAsset && preferAsset) {
+      // Use ExtendedImage.asset for bundled asset images
+      imageWidget = ExtendedImage.asset(
+        imageUrl!,
+        fit: fit,
+        borderRadius: BorderRadius.all(Radius.circular(radius ?? 0)),
+        height: height,
+        width: width,
+        color: color,
+        clearMemoryCacheWhenDispose: removeOnDispose,
+        mode: isZoomable ? ExtendedImageMode.gesture : ExtendedImageMode.none,
+        initGestureConfigHandler: isZoomable
+            ? (_) => GestureConfig(
+                minScale: 1.0,
+                animationMinScale: 0.8,
+                maxScale: 3.0,
+                animationMaxScale: 3.5,
+                speed: 1.0,
+                inertialSpeed: 100.0,
+                initialScale: 1.0,
+                inPageView: false,
+                initialAlignment: InitialAlignment.center,
+              )
+            : null,
+        loadStateChanged: (ExtendedImageState state) {
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              return Center(
+                child: SizedBox(
+                  width: cacheWidth ?? 200.w,
+                  height: cacheHeight ?? 100.h,
+                  child: Shimmer.fromColors(
+                    baseColor: AppColors.primary,
+                    highlightColor: AppColors.secoundPrimary,
+                    child: Image.asset(logoPngImage),
+                  ),
+                ),
+              );
+            case LoadState.completed:
+              return state.completedWidget;
+            case LoadState.failed:
+              return Padding(
+                padding: EdgeInsets.all(radius ?? 0.0),
+                child: ExtendedImage(
+                  borderRadius: BorderRadius.all(Radius.circular(radius ?? 0)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  image: const AssetImage(logoPngImage),
+                  clearMemoryCacheWhenDispose: true,
+                  fit: BoxFit.contain,
+                ),
+              );
+          }
+        },
+      );
+    } else if (isLocalFile) {
       // Use ExtendedImage.file for local files
       imageWidget = ExtendedImage.file(
         File(imageUrl!),

@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../constant/app_colors/app_colors.dart';
 import '../../constant/app_images/app_images.dart';
 import 'cached_image.dart';
+import '../../widgets/adaptive_image_provider.dart';
 
 class CarouselWidget extends StatelessWidget {
   final List<String> images;
@@ -174,7 +175,7 @@ class PhotoViewGalleryScreen extends StatelessWidget {
         itemCount: images.length,
         builder: (context, index) {
           return PhotoViewGalleryPageOptions(
-            imageProvider: NetworkImage(images[index]),
+            imageProvider: adaptiveImageProvider(images[index]),
             heroAttributes: heroTag != null
                 ? PhotoViewHeroAttributes(tag: '$heroTag$index')
                 : null,

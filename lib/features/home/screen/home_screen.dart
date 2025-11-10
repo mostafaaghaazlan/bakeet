@@ -1102,8 +1102,17 @@ class _ModernVendorCard extends StatelessWidget {
                     ),
                     child: CircleAvatar(
                       radius: 36.r,
-                      backgroundImage: NetworkImage(vendor.logoUrl),
                       backgroundColor: AppColors.white,
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 72.r,
+                          height: 72.r,
+                          child: CachedImage(
+                            imageUrl: vendor.logoUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const Spacer(),
@@ -1387,7 +1396,7 @@ class _FlashDealCard extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: -30,
+            top: -20,
             right: -30,
             child: Icon(
               Icons.flash_on,
@@ -1418,8 +1427,17 @@ class _FlashDealCard extends StatelessWidget {
                 const Spacer(),
                 CircleAvatar(
                   radius: 24.r,
-                  backgroundImage: NetworkImage(vendor.logoUrl),
                   backgroundColor: AppColors.white,
+                  child: ClipOval(
+                    child: SizedBox(
+                      width: 48.r,
+                      height: 48.r,
+                      child: CachedImage(
+                        imageUrl: vendor.logoUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 8.h),
                 Text(
@@ -2073,8 +2091,17 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
                     ),
                     child: CircleAvatar(
                       radius: 30.r,
-                      backgroundImage: NetworkImage(vendor.logoUrl),
                       backgroundColor: AppColors.white,
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 60.r,
+                          height: 60.r,
+                          child: CachedImage(
+                            imageUrl: vendor.logoUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

@@ -6,7 +6,8 @@ import 'mock_products.dart';
 
 class MarketplaceRepository {
   // Singleton pattern
-  static final MarketplaceRepository _instance = MarketplaceRepository._internal();
+  static final MarketplaceRepository _instance =
+      MarketplaceRepository._internal();
   factory MarketplaceRepository() => _instance;
   MarketplaceRepository._internal();
 
@@ -15,13 +16,16 @@ class MarketplaceRepository {
     VendorModel(
       id: 'v01',
       name: 'امينو',
-      logoUrl: 'https://picsum.photos/seed/v01-logo/400/400',
-      bannerUrl: 'https://picsum.photos/seed/v01-banner/1200/400',
-      tagline: 'حرف تقليدية وأدوات منزلية',
-      primaryColor: const Color(0xFFB91C1C), // warm red
+      logoUrl:
+          'assets/images/427371248_1062903818310333_590859922107495707_n.jpg',
+      bannerUrl:
+          'assets/images/Screenshot_10-11-2025_21931_www.instagram.com.jpeg',
+      tagline: 'احذية و البسة',
+      primaryColor: const Color.fromARGB(255, 20, 11, 11), // warm red
       secondaryColor: const Color(0xFFEF4444),
-      accentColor: const Color(0xFFFECACA),
-      backgroundImageUrl: 'https://picsum.photos/seed/v01-bg/1600/600',
+      accentColor: const Color.fromARGB(255, 97, 96, 96),
+      backgroundImageUrl:
+          'assets/images/Screenshot_10-11-2025_2197_www.instagram.com.jpeg',
       gradientColors: [0xFFB91C1C, 0xFFEF4444],
       fontFamily: 'Cairo',
       textColor: const Color(0xFFFAFAFA),
@@ -29,14 +33,14 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v02',
-      name: 'استوديو أربيل',
-      logoUrl: 'https://picsum.photos/seed/v02-logo/400/400',
-      bannerUrl: 'https://picsum.photos/seed/v02-banner/1200/400',
+      name: 'عوينات انس',
+      logoUrl: 'assets/images/anas_logo.jpg',
+      bannerUrl: 'assets/images/anas_banner.jpeg',
       tagline: 'تصميم عصري وأثاث',
       primaryColor: const Color(0xFF6366F1),
       secondaryColor: const Color(0xFF4F46E5),
       accentColor: const Color(0xFF818CF8),
-      backgroundImageUrl: 'https://picsum.photos/seed/v02-bg/1600/600',
+      backgroundImageUrl: 'assets/images/anas_background.jpeg',
       gradientColors: [0xFF6366F1, 0xFF4F46E5, 0xFF818CF8],
       fontFamily: 'Montserrat',
       textColor: const Color(0xFFFFFFFF),
@@ -44,14 +48,14 @@ class MarketplaceRepository {
 
     VendorModel(
       id: 'v03',
-      name: 'حرفيات الموصل',
-      logoUrl: 'https://picsum.photos/seed/v03-logo/400/400',
-      bannerUrl: 'https://picsum.photos/seed/v03-banner/1200/400',
-      tagline: 'سجاد ومنسوجات حرفية',
+      name: 'Quick Move',
+      logoUrl: 'assets/images/q_lodo.jpg',
+      bannerUrl: 'assets/images/q3.jpeg',
+      tagline: 'اول براند عراقي للملابس الرياضية',
       primaryColor: const Color(0xFF92400E),
       secondaryColor: const Color(0xFFEA580C),
       accentColor: const Color(0xFFFDE68A),
-      backgroundImageUrl: 'https://picsum.photos/seed/v03-bg/1600/600',
+      backgroundImageUrl: 'assets/images/q3.jpeg',
       gradientColors: [0xFF92400E, 0xFFEA580C],
       fontFamily: 'Amiri',
       textColor: const Color(0xFF0F172A),
