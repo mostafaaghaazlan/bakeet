@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constant/app_colors/app_colors.dart';
 import '../../../core/constant/text_styles/app_text_style.dart';
 import '../../../core/ui/widgets/custom_button.dart';
@@ -67,7 +68,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
     await showDialog(
       context: context,
       builder: (context) => ColorPickerDialog(
-        title: 'Select Product Color',
+        title: tr('select_product_color'),
         initialColor: Colors.blue,
         onColorSelected: (color) {
           selectedColor = color;
@@ -82,7 +83,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text(
-            'Name This Color',
+            tr('name_this_color'),
             style: AppTextStyle.getSemiBoldStyle(
               color: AppColors.neutral900,
               fontSize: 18.sp,
@@ -115,8 +116,8 @@ class _AddProductDialogState extends State<AddProductDialog> {
               SizedBox(height: 16.h),
               CustomTextFormField(
                 controller: nameController,
-                labelText: 'Color Name',
-                hintText: 'e.g., Red, Blue, Forest Green',
+                labelText: tr('vendor_color_name'),
+                hintText: tr('vendor_color_name_placeholder'),
               ),
             ],
           ),
@@ -124,7 +125,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(
-                'Cancel',
+                tr('cancel'),
                 style: AppTextStyle.getMediumStyle(
                   color: AppColors.neutral600,
                   fontSize: 14.sp,
@@ -132,7 +133,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
               ),
             ),
             CustomButton(
-              text: 'Add',
+              text: tr('add'),
               onPressed: () {
                 if (nameController.text.isNotEmpty) {
                   Navigator.pop(context, true);
@@ -221,7 +222,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.product == null ? 'Add Product' : 'Edit Product',
+                    widget.product == null ? tr('add_vendor_product') : tr('edit_vendor_product'),
                     style: AppTextStyle.getSemiBoldStyle(
                       color: Colors.white,
                       fontSize: 18.sp,
@@ -246,11 +247,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     children: [
                       CustomTextFormField(
                         controller: _titleController,
-                        labelText: 'Product Title *',
-                        hintText: 'Enter product name',
+                        labelText: '${tr('vendor_product_title')} *',
+                        hintText: tr('enter_vendor_product_name'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Product title is required';
+                            return tr('vendor_product_title_required');
                           }
                           return null;
                         },
@@ -259,12 +260,12 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
                       CustomTextFormField(
                         controller: _shortDescController,
-                        labelText: 'Short Description *',
-                        hintText: 'Brief product description',
+                        labelText: '${tr('vendor_short_description')} *',
+                        hintText: tr('brief_vendor_product_description'),
                         maxLines: 2,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Short description is required';
+                            return tr('vendor_short_description_required');
                           }
                           return null;
                         },
@@ -273,8 +274,8 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
                       CustomTextFormField(
                         controller: _descController,
-                        labelText: 'Full Description',
-                        hintText: 'Detailed product description',
+                        labelText: tr('vendor_full_description'),
+                        hintText: tr('detailed_vendor_product_description'),
                         maxLines: 4,
                       ),
                       SizedBox(height: 16.h),
@@ -284,15 +285,15 @@ class _AddProductDialogState extends State<AddProductDialog> {
                           Expanded(
                             child: CustomTextFormField(
                               controller: _priceController,
-                              labelText: 'Price (IQD) *',
+                              labelText: '${tr('vendor_price_iqd')} *',
                               hintText: '0',
                               keyboardType: TextInputType.number,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Price is required';
+                                  return tr('vendor_price_required');
                                 }
                                 if (double.tryParse(value) == null) {
-                                  return 'Invalid price';
+                                  return tr('vendor_invalid_price');
                                 }
                                 return null;
                               },
@@ -302,7 +303,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                           Expanded(
                             child: CustomTextFormField(
                               controller: _comparePriceController,
-                              labelText: 'Compare Price (IQD)',
+                              labelText: tr('vendor_compare_price_iqd'),
                               hintText: '0',
                               keyboardType: TextInputType.number,
                             ),
@@ -313,11 +314,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
                       CustomTextFormField(
                         controller: _categoryController,
-                        labelText: 'Category *',
-                        hintText: 'e.g., Clothing, Electronics',
+                        labelText: '${tr('vendor_category')} *',
+                        hintText: tr('vendor_category_placeholder'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Category is required';
+                            return tr('vendor_category_required');
                           }
                           return null;
                         },
@@ -326,14 +327,14 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
                       CustomTextFormField(
                         controller: _tagsController,
-                        labelText: 'Tags (comma separated)',
-                        hintText: 'tag1, tag2, tag3',
+                        labelText: tr('vendor_tags'),
+                        hintText: tr('vendor_tags_placeholder'),
                       ),
                       SizedBox(height: 24.h),
 
                       // Product Images
                       Text(
-                        'Product Images *',
+                        '${tr('vendor_product_images')} *',
                         style: AppTextStyle.getSemiBoldStyle(
                           color: AppColors.neutral900,
                           fontSize: 14.sp,
@@ -341,7 +342,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                       ),
                       SizedBox(height: 8.h),
                       SmartUploadField(
-                        hint: 'Upload product images',
+                        hint: tr('upload_vendor_product_images'),
                         allowedTypes: const SmartAllowedTypes(images: true),
                         allowMultiple: true,
                         maxSizeInMB: 5,
@@ -354,7 +355,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                       if (_productImages.isNotEmpty) ...[
                         SizedBox(height: 8.h),
                         Text(
-                          '${_productImages.length} image(s) selected',
+                          '${_productImages.length} ${tr('vendor_images_selected')}',
                           style: AppTextStyle.getRegularStyle(
                             color: AppColors.neutral600,
                             fontSize: 12.sp,
@@ -368,7 +369,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Available Colors',
+                            tr('vendor_available_colors'),
                             style: AppTextStyle.getSemiBoldStyle(
                               color: AppColors.neutral900,
                               fontSize: 14.sp,
@@ -377,7 +378,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                           TextButton.icon(
                             onPressed: _addColor,
                             icon: const Icon(Icons.add),
-                            label: const Text('Add Color'),
+                            label: Text(tr('add_vendor_color')),
                           ),
                         ],
                       ),
@@ -425,7 +426,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                 children: [
                   Expanded(
                     child: CustomButton(
-                      text: 'Cancel',
+                      text: tr('vendor_cancel'),
                       onPressed: () => Navigator.pop(context),
                       color: Colors.grey,
                       h: 48.h,
@@ -435,7 +436,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: CustomButton(
-                      text: 'Save Product',
+                      text: tr('save_vendor_product'),
                       onPressed: _saveProduct,
                       color: AppColors.primary,
                       h: 48.h,

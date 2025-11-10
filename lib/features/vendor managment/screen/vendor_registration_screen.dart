@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../core/constant/app_colors/app_colors.dart';
 import '../../../core/constant/text_styles/app_text_style.dart';
 import '../../../core/ui/widgets/custom_button.dart';
@@ -53,15 +54,15 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
       builder: (dialogContext) => AddProductDialog(
         product: product,
         onSave: (updatedProduct) {
-          print(
+          debugPrint(
             '🟡 onSave callback called in screen for: ${updatedProduct.title}',
           );
           // Use the cubit reference we got earlier
           if (index != null) {
-            print('🟡 Updating product at index $index');
+            debugPrint('🟡 Updating product at index $index');
             cubit.updateProduct(index, updatedProduct);
           } else {
-            print('🟡 Adding new product');
+            debugPrint('🟡 Adding new product');
             cubit.addProduct(updatedProduct);
           }
         },
@@ -89,7 +90,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Vendor Registration'),
+        title: Text(tr('vendor_registration')),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
@@ -145,11 +146,11 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
         },
         buildWhen: (previous, current) {
           // Rebuild for all states except initial
-          print('🟠 BlocConsumer buildWhen: ${current.runtimeType}');
+          debugPrint('🟠 BlocConsumer buildWhen: ${current.runtimeType}');
           return true; // Rebuild for all state changes
         },
         builder: (context, state) {
-          print(
+          debugPrint(
             '🟠 BlocConsumer builder called with state: ${state.runtimeType}',
           );
           final cubit = context.read<VVendorManagmentCubit>();
@@ -164,7 +165,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                 children: [
                   // Header Section
                   Text(
-                    'Become a Vendor',
+                    tr('become_vendor'),
                     style: AppTextStyle.getBoldStyle(
                       color: AppColors.neutral900,
                       fontSize: 24.sp,
@@ -172,7 +173,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    'Fill in the information below to register your store',
+                    tr('fill_vendor_info'),
                     style: AppTextStyle.getRegularStyle(
                       color: AppColors.neutral600,
                       fontSize: 14.sp,
@@ -181,16 +182,16 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   SizedBox(height: 24.h),
 
                   // Vendor Information Section
-                  _buildSectionTitle('Vendor Information'),
+                  _buildSectionTitle(tr('vendor_information')),
                   SizedBox(height: 16.h),
 
                   CustomTextFormField(
                     controller: _nameController,
-                    labelText: 'Vendor Name *',
-                    hintText: 'Enter your store name',
+                    labelText: '${tr('vendor_name')} *',
+                    hintText: tr('enter_store_name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Vendor name is required';
+                        return tr('vendor_name_required');
                       }
                       return null;
                     },
@@ -202,11 +203,11 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
 
                   CustomTextFormField(
                     controller: _taglineController,
-                    labelText: 'Tagline *',
-                    hintText: 'Brief description of your store',
+                    labelText: '${tr('tagline')} *',
+                    hintText: tr('brief_store_description'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Tagline is required';
+                        return tr('tagline_required');
                       }
                       return null;
                     },
@@ -218,8 +219,8 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
 
                   CustomTextFormField(
                     controller: _descriptionController,
-                    labelText: 'Description',
-                    hintText: 'Detailed description of your store',
+                    labelText: tr('store_description'),
+                    hintText: tr('detailed_store_description'),
                     maxLines: 4,
                     onChanged: (value) {
                       cubit.updateVendorInfo(description: value);
@@ -228,10 +229,10 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   SizedBox(height: 24.h),
 
                   // Logo Upload Section
-                  _buildSectionTitle('Store Logo *'),
+                  _buildSectionTitle('${tr('store_logo')} *'),
                   SizedBox(height: 12.h),
                   SmartUploadField(
-                    hint: 'Upload your store logo (square)',
+                    hint: tr('store_logo_square'),
                     allowedTypes: const SmartAllowedTypes(images: true),
                     maxSizeInMB: 5,
                     initialPreview: _logoFile != null
@@ -249,10 +250,10 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   SizedBox(height: 24.h),
 
                   // Banner Upload Section
-                  _buildSectionTitle('Store Banner'),
+                  _buildSectionTitle(tr('store_banner')),
                   SizedBox(height: 8.h),
                   Text(
-                    'Wide banner image for your storefront (1200x400)',
+                    tr('wide_banner_description'),
                     style: AppTextStyle.getRegularStyle(
                       color: AppColors.neutral600,
                       fontSize: 12.sp,
@@ -260,7 +261,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   ),
                   SizedBox(height: 12.h),
                   SmartUploadField(
-                    hint: 'Upload banner image',
+                    hint: tr('upload_banner_image'),
                     allowedTypes: const SmartAllowedTypes(images: true),
                     maxSizeInMB: 5,
                     initialPreview: _bannerFile != null
@@ -278,10 +279,10 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   SizedBox(height: 24.h),
 
                   // Background Upload Section
-                  _buildSectionTitle('Background Image'),
+                  _buildSectionTitle(tr('background_image')),
                   SizedBox(height: 8.h),
                   Text(
-                    'Background pattern or texture for your storefront',
+                    tr('background_pattern_description'),
                     style: AppTextStyle.getRegularStyle(
                       color: AppColors.neutral600,
                       fontSize: 12.sp,
@@ -289,7 +290,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   ),
                   SizedBox(height: 12.h),
                   SmartUploadField(
-                    hint: 'Upload background image',
+                    hint: tr('upload_background_image'),
                     allowedTypes: const SmartAllowedTypes(images: true),
                     maxSizeInMB: 5,
                     initialPreview: _backgroundFile != null
@@ -307,16 +308,16 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   SizedBox(height: 24.h),
 
                   // Brand Colors Section
-                  _buildSectionTitle('Brand Colors'),
+                  _buildSectionTitle(tr('brand_colors')),
                   SizedBox(height: 12.h),
                   Row(
                     children: [
                       Expanded(
                         child: _buildColorOption(
-                          'Primary',
+                          tr('primary_color'),
                           _primaryColor,
                           () => _showColorPicker(
-                            'Select Primary Color',
+                            tr('select_primary_color'),
                             _primaryColor,
                             (color) {
                               setState(() => _primaryColor = color);
@@ -328,10 +329,10 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _buildColorOption(
-                          'Secondary',
+                          tr('secondary_color'),
                           _secondaryColor,
                           () => _showColorPicker(
-                            'Select Secondary Color',
+                            tr('select_secondary_color'),
                             _secondaryColor,
                             (color) {
                               setState(() => _secondaryColor = color);
@@ -345,10 +346,10 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                       SizedBox(width: 12.w),
                       Expanded(
                         child: _buildColorOption(
-                          'Accent',
+                          tr('accent_color'),
                           _accentColor,
                           () => _showColorPicker(
-                            'Select Accent Color',
+                            tr('select_accent_color'),
                             _accentColor,
                             (color) {
                               setState(() => _accentColor = color);
@@ -365,11 +366,11 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildSectionTitle('Products *'),
+                      _buildSectionTitle('${tr('vendor_products')} *'),
                       TextButton.icon(
                         onPressed: () => _showAddProductDialog(),
                         icon: const Icon(Icons.add),
-                        label: const Text('Add Product'),
+                        label: Text(tr('add_vendor_product')),
                       ),
                     ],
                   ),
@@ -384,7 +385,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                           current is ProductUpdated ||
                           current is ProductRemoved ||
                           current is VendorDataUpdated;
-                      print(
+                      debugPrint(
                         '🟣 BlocBuilder buildWhen: shouldRebuild=$shouldRebuild, state=${current.runtimeType}',
                       );
                       return shouldRebuild;
@@ -393,7 +394,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                       final currentCubit = context
                           .read<VVendorManagmentCubit>();
                       final products = currentCubit.vendorData.products;
-                      print(
+                      debugPrint(
                         '🟣 BlocBuilder building with ${products.length} products',
                       );
                       if (products.isEmpty) {
@@ -417,7 +418,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                                 ),
                                 SizedBox(height: 12.h),
                                 Text(
-                                  'No products added yet',
+                                  tr('no_vendor_products_added'),
                                   style: AppTextStyle.getMediumStyle(
                                     color: AppColors.neutral600,
                                     fontSize: 14.sp,
@@ -425,7 +426,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                                 ),
                                 SizedBox(height: 8.h),
                                 Text(
-                                  'Add at least one product to continue',
+                                  tr('add_one_vendor_product'),
                                   style: AppTextStyle.getRegularStyle(
                                     color: AppColors.neutral400,
                                     fontSize: 12.sp,
@@ -459,7 +460,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
 
                   // Submit Button
                   CustomButton(
-                    text: isLoading ? 'Submitting...' : 'Submit Registration',
+                    text: isLoading ? tr('vendor_submitting') : tr('submit_vendor_registration'),
                     onPressed: isLoading
                         ? null
                         : () {
