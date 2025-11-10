@@ -149,12 +149,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary25,
-            AppColors.appWhite,
-            AppColors.secondary.withValues(alpha: 0.08),
-          ],
-          stops: const [0.0, 0.5, 1.0],
+          colors: [AppColors.primary25, AppColors.appWhite, AppColors.appWhite],
+          stops: const [0.0, 0.3, 1.0],
         ),
       ),
     );
@@ -167,17 +163,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Container(
             padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: AppColors.appWhite,
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.28),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   blurRadius: 8,
-                  offset: const Offset(0, 4),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -195,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Text(
             tr('app_name_arabic'),
             style: TextStyle(
-              color: AppColors.neutral400,
+              color: AppColors.primary,
               fontWeight: FontWeight.bold,
               fontSize: 24.sp,
               letterSpacing: 0.5,
@@ -359,7 +351,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [AppColors.danger, AppColors.warning],
+                      colors: [AppColors.primary, AppColors.secondary],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
@@ -709,9 +703,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   margin: EdgeInsets.all(12.r),
                   padding: EdgeInsets.all(8.r),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, AppColors.secondary],
-                    ),
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Icon(
@@ -1038,7 +1030,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
   }
 }
 
-// Modern Vendor Card with Gradient
+// Modern Vendor Card with Purple Brand Color
 class _ModernVendorCard extends StatelessWidget {
   final VendorModel vendor;
   final int index;
@@ -1047,12 +1039,13 @@ class _ModernVendorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradients = [
-      [AppColors.primary, AppColors.secondary],
-      [AppColors.cardPurple, AppColors.cardRed],
-      [AppColors.cardGreen, AppColors.cardBlue],
+    // Use purple shades from the brand identity
+    final purpleShades = [
+      AppColors.primary500,
+      AppColors.primary600,
+      AppColors.primary400,
     ];
-    final gradient = gradients[index % gradients.length];
+    final cardColor = purpleShades[index % purpleShades.length];
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -1066,14 +1059,10 @@ class _ModernVendorCard extends StatelessWidget {
         width: 200.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24.r),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradient,
-          ),
+          color: cardColor,
           boxShadow: [
             BoxShadow(
-              color: gradient[0].withValues(alpha: 0.4),
+              color: AppColors.primary.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -1283,7 +1272,7 @@ class _StaggeredProductCardState extends State<_StaggeredProductCard>
                           ),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [AppColors.danger, AppColors.warning],
+                              colors: [AppColors.primary, AppColors.secondary],
                             ),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
@@ -1382,17 +1371,14 @@ class _FlashDealCard extends StatelessWidget {
       width: 160.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.r),
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.danger.withValues(alpha: 0.9),
-            AppColors.warning.withValues(alpha: 0.9),
-          ],
+          colors: [AppColors.primary, AppColors.secondary],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.danger.withValues(alpha: 0.4),
+            color: AppColors.primary.withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -1943,12 +1929,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
                       width: 100.w,
                       height: 100.h,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.primary.withValues(alpha: 0.1),
-                            AppColors.accent.withValues(alpha: 0.1),
-                          ],
-                        ),
+                        color: AppColors.primary.withValues(alpha: 0.08),
                       ),
                       child: product.images.isNotEmpty
                           ? CachedImage(
@@ -1997,12 +1978,7 @@ class _SearchResultsSheetState extends State<_SearchResultsSheet>
                               vertical: 6.h,
                             ),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primary.withValues(alpha: 0.15),
-                                  AppColors.accent.withValues(alpha: 0.15),
-                                ],
-                              ),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Text(
