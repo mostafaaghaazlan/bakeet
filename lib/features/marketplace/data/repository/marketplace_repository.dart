@@ -14,7 +14,7 @@ class MarketplaceRepository {
   final List<VendorModel> _vendors = [
     VendorModel(
       id: 'v01',
-      name: 'بازار بغداد',
+      name: 'امينو',
       logoUrl: 'https://picsum.photos/seed/v01-logo/400/400',
       bannerUrl: 'https://picsum.photos/seed/v01-banner/1200/400',
       tagline: 'حرف تقليدية وأدوات منزلية',
