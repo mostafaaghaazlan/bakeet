@@ -3,6 +3,7 @@ class ProductModel {
   final String vendorId;
   final String title;
   final List<String> images;
+  final List<String>? videos; // Video URLs for Reels-style display
   final double price;
   final double? compareAtPrice;
   final String shortDescription;
@@ -16,6 +17,7 @@ class ProductModel {
     required this.vendorId,
     required this.title,
     required this.images,
+    this.videos,
     required this.price,
     this.compareAtPrice,
     required this.shortDescription,
@@ -32,6 +34,9 @@ class ProductModel {
     images:
         (json['images'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
         [],
+    videos: (json['videos'] as List<dynamic>?)
+        ?.map((e) => e.toString())
+        .toList(),
     price: (json['price'] ?? 0).toDouble(),
     compareAtPrice: json['compareAtPrice'] != null
         ? (json['compareAtPrice'] as num).toDouble()
@@ -52,6 +57,7 @@ class ProductModel {
     'vendorId': vendorId,
     'title': title,
     'images': images,
+    'videos': videos,
     'price': price,
     'compareAtPrice': compareAtPrice,
     'shortDescription': shortDescription,

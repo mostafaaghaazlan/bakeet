@@ -5,6 +5,7 @@ import 'package:bakeet/features/marketplace/data/repository/marketplace_reposito
 import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/cubit/cart_cubit.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
+import 'package:bakeet/features/marketplace/widgets/product_video_player.dart';
 import 'package:bakeet/core/di/injection.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
@@ -500,34 +501,59 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   Widget _buildImageGallery() {
+    // Combine videos and images into a single media list
+    final List<Map<String, dynamic>> mediaItems = [];
+
+    // Add videos first
+    if (_product?.videos != null && _product!.videos!.isNotEmpty) {
+      for (var video in _product!.videos!) {
+        mediaItems.add({'type': 'video', 'url': video});
+      }
+    }
+
+    // Then add images
     final images = (_product?.images.isNotEmpty ?? false)
         ? _product!.images
         : ['https://via.placeholder.com/400'];
+
+    for (var image in images) {
+      mediaItems.add({'type': 'image', 'url': image});
+    }
 
     return Column(
       children: [
         SizedBox(
           height: 400.h,
           child: PageView.builder(
-            itemCount: images.length,
+            itemCount: mediaItems.length,
             onPageChanged: (index) {
               setState(() => _currentImageIndex = index);
             },
             itemBuilder: (context, index) {
+              final item = mediaItems[index];
+              final isVideo = item['type'] == 'video';
+
               return GestureDetector(
-                onTap: () => _openFullScreenImageViewer(index),
-                child: CachedImage(imageUrl: images[index], fit: BoxFit.cover),
+                onTap: isVideo ? null : () => _openFullScreenImageViewer(index),
+                child: isVideo
+                    ? ProductVideoPlayer(
+                        videoUrl: item['url'],
+                        autoPlay: index == _currentImageIndex,
+                        showControls: true,
+                        borderRadius: BorderRadius.zero,
+                      )
+                    : CachedImage(imageUrl: item['url'], fit: BoxFit.cover),
               );
             },
           ),
         ),
-        if (images.length > 1) ...[
+        if (mediaItems.length > 1) ...[
           SizedBox(height: 16.h),
-          // Image Indicators
+          // Media Indicators
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              images.length,
+              mediaItems.length,
               (index) => AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 margin: EdgeInsets.symmetric(horizontal: 4.w),

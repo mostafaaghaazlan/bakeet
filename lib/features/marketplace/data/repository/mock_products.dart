@@ -10,6 +10,7 @@ final List<ProductModel> mockProducts = [
       'assets/images/Screenshot_10-11-2025_2197_www.instagram.com.jpeg',
       'assets/images/Screenshot_10-11-2025_21837_www.instagram.com.jpeg',
     ],
+    videos: ['assets/videos/video.mp4'],
     price: 45000,
     compareAtPrice: 35000,
     shortDescription: "احذية NIKE BS DUNK DRAGON",
@@ -24,6 +25,7 @@ final List<ProductModel> mockProducts = [
     images: [
       'assets/images/Screenshot_10-11-2025_21958_www.instagram.com.jpeg',
     ],
+
     price: 95000,
     compareAtPrice: 120000,
     shortDescription: "BALENCIAGA CUP",

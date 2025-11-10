@@ -56,6 +56,8 @@ dependencies:
   pull_to_refresh: ^2.0.0
   shimmer: ^3.0.0
   simple_animations: ^5.2.0
+  video_player: ^2.9.2
+  visibility_detector: ^0.4.0+2
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -78,6 +80,7 @@ flutter:
     - assets/lottie/
     - assets/Gif/
     - assets/translations/
+    - assets/videos/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
   # For details regarding adding assets from package dependencies, see

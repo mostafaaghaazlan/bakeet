@@ -10,6 +10,7 @@ import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_theme.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
 import 'package:bakeet/features/marketplace/widgets/vendor_banner_carousel.dart';
+import 'package:bakeet/features/marketplace/widgets/product_video_player.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 import 'package:bakeet/core/di/injection.dart';
@@ -799,7 +800,7 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product Image
+                // Product Image or Video
                 Stack(
                   children: [
                     ClipRRect(
@@ -808,12 +809,23 @@ class _AnimatedProductCardState extends State<_AnimatedProductCard>
                       ),
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: CachedImage(
-                          imageUrl: widget.product.images.isNotEmpty
-                              ? widget.product.images.first
-                              : '',
-                          fit: BoxFit.cover,
-                        ),
+                        child:
+                            widget.product.videos != null &&
+                                widget.product.videos!.isNotEmpty
+                            ? ProductVideoPlayer(
+                                videoUrl: widget.product.videos!.first,
+                                autoPlay: true,
+                                showControls: false,
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.r),
+                                ),
+                              )
+                            : CachedImage(
+                                imageUrl: widget.product.images.isNotEmpty
+                                    ? widget.product.images.first
+                                    : '',
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     // Discount Badge
