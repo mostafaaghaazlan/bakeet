@@ -54,6 +54,9 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
           _isInitialized = true;
         });
 
+        // Mute the video by default (Reels-style)
+        _controller.setVolume(0.0);
+
         // Set looping for Reels-style continuous play
         _controller.setLooping(true);
 
