@@ -1,6 +1,5 @@
 import 'package:bakeet/features/auth/screen/login_screen.dart';
 import 'package:bakeet/features/home/cubit/home_cubit.dart';
-import 'package:bakeet/features/home/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,8 +50,8 @@ class MyApp extends StatelessWidget {
             supportedLocales: context.supportedLocales,
             locale: context.locale,
             // Launch to the modern e-commerce HomeScreen
-            // home: LoginScreen(),
-            home: HomeScreen(),
+            home: LoginScreen(),
+            // home: HomeScreen(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
