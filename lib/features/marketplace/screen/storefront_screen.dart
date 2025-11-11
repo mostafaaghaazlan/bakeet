@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,12 +10,12 @@ import 'package:bakeet/features/marketplace/data/model/product_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_model.dart';
 import 'package:bakeet/features/marketplace/data/model/vendor_theme.dart';
 import 'package:bakeet/core/ui/widgets/cached_image.dart';
-import 'package:bakeet/features/marketplace/widgets/vendor_banner_carousel.dart';
 import 'package:bakeet/features/marketplace/widgets/product_video_player.dart';
 import 'package:bakeet/core/utils/functions/currency_formatter.dart';
 import 'package:bakeet/core/constant/app_colors/app_colors.dart';
 import 'package:bakeet/core/di/injection.dart';
 import 'package:bakeet/features/marketplace/screen/cart_screen.dart';
+import 'package:bakeet/features/marketplace/screen/storefront_screen_widgets.dart';
 import 'package:shimmer/shimmer.dart';
 import 'product_detail_screen.dart';
 
@@ -132,27 +133,31 @@ class _StorefrontScreenState extends State<StorefrontScreen>
             slivers: [
               if (snapshot.hasData && vendorTheme != null)
                 _buildVendorHeader(snapshot.data!, vendorTheme),
-              // Banner carousel placed below vendor info and above categories
+              // Product Banner carousel placed below vendor info and above categories
               if (snapshot.hasData && vendorTheme != null)
                 SliverToBoxAdapter(child: SizedBox(height: 12.h)),
               if (snapshot.hasData && vendorTheme != null)
                 SliverToBoxAdapter(
                   child: SizedBox(
-                    height: 200.h,
+                    height: 240.h,
                     child: Builder(
                       builder: (context) {
-                        final vendor = snapshot.data!;
-                        final banners = <String>[];
-                        // Only add banner URL, NOT background image
-                        if (vendor.bannerUrl.isNotEmpty) {
-                          banners.add(vendor.bannerUrl);
-                        }
+                        // Get featured products for the banner (prioritize discounted items)
+                        final featuredProducts = products
+                            .where((p) => p.compareAtPrice != null)
+                            .take(5)
+                            .toList();
+                        final bannerProducts = featuredProducts.isNotEmpty
+                            ? featuredProducts
+                            : products.take(5).toList();
 
-                        if (banners.isEmpty) {
+                        if (bannerProducts.isEmpty) {
                           return const SizedBox.shrink();
                         }
 
-                        return VendorBannerCarousel(banners: banners);
+                        return ProductBannerCarouselStorefront(
+                          products: bannerProducts,
+                        );
                       },
                     ),
                   ),
@@ -181,21 +186,23 @@ class _StorefrontScreenState extends State<StorefrontScreen>
 
   Future<VendorModel?> _getVendor(MarketplaceRepository repository) async {
     final vendors = await repository.getVendors();
-    print('🔍 Looking for vendor with ID: ${widget.vendorId}');
-    print('🔍 Total vendors in repository: ${vendors.length}');
+    debugPrint('🔍 Looking for vendor with ID: ${widget.vendorId}');
+    debugPrint('🔍 Total vendors in repository: ${vendors.length}');
     try {
       final vendor = vendors.firstWhere((v) => v.id == widget.vendorId);
-      print('✅ Found vendor: ${vendor.name}');
-      print(
+      debugPrint('✅ Found vendor: ${vendor.name}');
+      debugPrint(
         '🎨 Vendor colors: Primary=${vendor.primaryColor.toARGB32()}, Secondary=${vendor.secondaryColor.toARGB32()}, Accent=${vendor.accentColor.toARGB32()}',
       );
-      print('🖼️ Banner: ${vendor.bannerUrl}');
-      print('🖼️ Background: ${vendor.backgroundImageUrl}');
-      print('🖼️ Logo: ${vendor.logoUrl}');
+      debugPrint('🖼️ Banner: ${vendor.bannerUrl}');
+      debugPrint('🖼️ Background: ${vendor.backgroundImageUrl}');
+      debugPrint('🖼️ Logo: ${vendor.logoUrl}');
       return vendor;
     } catch (e) {
-      print('❌ Vendor not found: $e');
-      print('📋 Available vendor IDs: ${vendors.map((v) => v.id).join(", ")}');
+      debugPrint('❌ Vendor not found: $e');
+      debugPrint(
+        '📋 Available vendor IDs: ${vendors.map((v) => v.id).join(", ")}',
+      );
       return null;
     }
   }
