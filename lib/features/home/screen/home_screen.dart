@@ -107,13 +107,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         BlocProvider(create: (_) => VendorsCubit(_repo)..loadVendors()),
         BlocProvider(create: (_) => StorefrontCubit(_repo)),
       ],
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: _buildAppBar(context),
-        body: Stack(
-          children: [
-            _buildGradientBackground(context),
-            RefreshIndicator(
+      child: BlocListener<VendorsCubit, VendorsState>(
+        listener: (context, state) {
+          if (state is VendorsLoaded) {
+            // Load products only once when vendors are loaded
+            context.read<StorefrontCubit>().loadAllProducts();
+          }
+        },
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: _buildAppBar(context),
+          body: Stack(
+            children: [
+              _buildGradientBackground(context),
+              RefreshIndicator(
               onRefresh: _onRefresh,
               color: AppColors.primary,
               child: CustomScrollView(
@@ -139,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ],
         ),
         floatingActionButton: _buildFAB(context),
+        ),
       ),
     );
   }
@@ -532,14 +540,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ),
           SizedBox(height: 16.h),
-          BlocBuilder<VendorsCubit, VendorsState>(
-            builder: (context, state) {
-              if (state is VendorsLoaded) {
-                context.read<StorefrontCubit>().loadAllProducts();
-              }
-              return const SizedBox.shrink();
-            },
-          ),
           BlocBuilder<StorefrontCubit, StorefrontState>(
             builder: (context, state) {
               if (state is StorefrontLoaded) {
