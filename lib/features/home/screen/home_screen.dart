@@ -577,23 +577,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 }
 
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16.h,
-                    crossAxisSpacing: 16.w,
-                    childAspectRatio: 0.6,
-                  ),
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (context, index) {
-                    return _StaggeredProductCard(
-                      product: filteredProducts[index],
-                      index: index,
-                    );
-                  },
+                return _ProductGridWithBanners(
+                  products: filteredProducts,
+                  allProducts: products,
                 );
               }
               if (state is StorefrontLoading) {
@@ -1306,6 +1292,78 @@ class _ProductBannerCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Product Grid with Banners inserted every 5 rows
+class _ProductGridWithBanners extends StatelessWidget {
+  final List<ProductModel> products;
+  final List<ProductModel> allProducts;
+
+  const _ProductGridWithBanners({
+    required this.products,
+    required this.allProducts,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> children = [];
+    const int productsPerRow = 2;
+    const int rowsBeforeBanner = 5;
+    const int productsBeforeBanner = productsPerRow * rowsBeforeBanner; // 10 products
+
+    for (int i = 0; i < products.length; i += productsBeforeBanner) {
+      // Add a grid section with up to 10 products
+      final sectionProducts = products.skip(i).take(productsBeforeBanner).toList();
+
+      children.add(
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: productsPerRow,
+            mainAxisSpacing: 16.h,
+            crossAxisSpacing: 16.w,
+            childAspectRatio: 0.6,
+          ),
+          itemCount: sectionProducts.length,
+          itemBuilder: (context, index) {
+            final productIndex = i + index;
+            return _StaggeredProductCard(
+              product: sectionProducts[index],
+              index: productIndex,
+            );
+          },
+        ),
+      );
+
+      // Add banner after this section if there are more products
+      if (i + productsBeforeBanner < products.length) {
+        children.add(SizedBox(height: 32.h));
+
+        // Get featured products for the banner (prioritize discounted items)
+        final featuredProducts = allProducts
+            .where((p) => p.compareAtPrice != null)
+            .take(5)
+            .toList();
+        final bannerProducts = featuredProducts.isNotEmpty
+            ? featuredProducts
+            : allProducts.take(5).toList();
+
+        children.add(
+          SizedBox(
+            height: 240.h,
+            child: _ProductBannerCarousel(products: bannerProducts),
+          ),
+        );
+        children.add(SizedBox(height: 32.h));
+      }
+    }
+
+    return Column(
+      children: children,
     );
   }
 }
