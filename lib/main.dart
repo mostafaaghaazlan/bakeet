@@ -51,9 +51,7 @@ class MyApp extends StatelessWidget {
             localizationsDelegates: context.localizationDelegates,
             supportedLocales: context.supportedLocales,
             locale: context.locale,
-            // Launch to login screen first
-            // home: const LoginScreen(),
-            home: const HomeScreen(),
+            home: const LoginScreen(),
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
