@@ -262,16 +262,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildBannerSection() {
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 200.h,
-        child: BlocBuilder<VendorsCubit, VendorsState>(
+        height: 240.h,
+        child: BlocBuilder<StorefrontCubit, StorefrontState>(
           builder: (context, state) {
-            if (state is VendorsLoaded) {
-              final banners = state.vendors
-                  .take(3)
-                  .map((v) => (v as VendorModel).bannerUrl)
-                  .toList();
-              if (banners.isEmpty) return const SizedBox.shrink();
-              return _AnimatedBannerCarousel(banners: banners);
+            if (state is StorefrontLoaded) {
+              final products = state.products.cast<ProductModel>();
+              final featuredProducts = products.where((p) => p.compareAtPrice != null).take(5).toList();
+              if (featuredProducts.isEmpty) {
+                // Fallback to first 5 products if no discounted items
+                final fallbackProducts = products.take(5).toList();
+                return _ProductBannerCarousel(products: fallbackProducts);
+              }
+              return _ProductBannerCarousel(products: featuredProducts);
             }
             return _buildBannerShimmer();
           },
@@ -887,32 +889,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 }
 
-// Animated Banner Carousel with Auto-rotation
-class _AnimatedBannerCarousel extends StatefulWidget {
-  final List<String> banners;
+// Product Banner Carousel with Discount Info
+class _ProductBannerCarousel extends StatefulWidget {
+  final List<ProductModel> products;
 
-  const _AnimatedBannerCarousel({required this.banners});
+  const _ProductBannerCarousel({required this.products});
 
   @override
-  State<_AnimatedBannerCarousel> createState() =>
-      _AnimatedBannerCarouselState();
+  State<_ProductBannerCarousel> createState() =>
+      _ProductBannerCarouselState();
 }
 
-class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
+class _ProductBannerCarouselState extends State<_ProductBannerCarousel>
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   int _currentPage = 0;
   Timer? _timer;
+  late AnimationController _pulseController;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.9);
+    _pageController = PageController(viewportFraction: 0.92);
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
     _startAutoRotate();
   }
 
   void _startAutoRotate() {
-    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (_currentPage < widget.banners.length - 1) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_currentPage < widget.products.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
@@ -931,6 +939,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
   void dispose() {
     _timer?.cancel();
     _pageController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -941,7 +950,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
         Expanded(
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.banners.length,
+            itemCount: widget.products.length,
             onPageChanged: (index) => setState(() => _currentPage = index),
             itemBuilder: (context, index) {
               return AnimatedBuilder(
@@ -950,53 +959,16 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
                   double value = 1.0;
                   if (_pageController.position.haveDimensions) {
                     value = _pageController.page! - index;
-                    value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+                    value = (1 - (value.abs() * 0.2)).clamp(0.0, 1.0);
                   }
-                  return Center(
-                    child: SizedBox(
-                      height: Curves.easeOut.transform(value) * 200.h,
-                      child: child,
-                    ),
+                  return Transform.scale(
+                    scale: Curves.easeOut.transform(value),
+                    child: child,
                   );
                 },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24.r),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedImage(
-                            imageUrl: widget.banners[index],
-                            fit: BoxFit.cover,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  AppColors.black.withValues(alpha: 0.4),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                child: _ProductBannerCard(
+                  product: widget.products[index],
+                  pulseAnimation: _pulseController,
                 ),
               );
             },
@@ -1006,7 +978,7 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            widget.banners.length,
+            widget.products.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeInOut,
@@ -1026,6 +998,314 @@ class _AnimatedBannerCarouselState extends State<_AnimatedBannerCarousel> {
           ),
         ),
       ],
+    );
+  }
+}
+
+// Individual Product Banner Card
+class _ProductBannerCard extends StatelessWidget {
+  final ProductModel product;
+  final AnimationController pulseAnimation;
+
+  const _ProductBannerCard({
+    required this.product,
+    required this.pulseAnimation,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDiscount = product.compareAtPrice != null;
+    final discountPercent = hasDiscount
+        ? (((product.compareAtPrice! - product.price) /
+                      product.compareAtPrice!) *
+                  100)
+              .round()
+        : 0;
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ProductDetailScreen(productId: product.id),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24.r),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Product Image Background
+                CachedImage(
+                  imageUrl: product.images.isNotEmpty ? product.images.first : '',
+                  fit: BoxFit.cover,
+                ),
+
+                // Gradient Overlay
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        AppColors.black.withValues(alpha: 0.1),
+                        AppColors.black.withValues(alpha: 0.7),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Content Overlay
+                Positioned(
+                  top: 16.h,
+                  left: 16.w,
+                  right: 16.w,
+                  bottom: 16.h,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Discount Badge (Top Left)
+                      if (hasDiscount)
+                        AnimatedBuilder(
+                          animation: pulseAnimation,
+                          builder: (context, child) {
+                            return Transform.scale(
+                              scale: 1.0 + (pulseAnimation.value * 0.1),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 10.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFFF4757), Color(0xFFFF6B81)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF4757).withValues(alpha: 0.4),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '$discountPercent%',
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      tr('discount'),
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                      const Spacer(),
+
+                      // Product Info (Bottom)
+                      // Product Title
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Text(
+                          product.title,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.neutral900,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      SizedBox(height: 12.h),
+
+                      // Price Section & Add to Cart Button
+                      Row(
+                        children: [
+                          // Price Info
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (hasDiscount) ...[
+                                  // Original Price (Strikethrough)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 4.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white.withValues(alpha: 0.3),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Text(
+                                      CurrencyFormatter.formatIraqiDinar(
+                                        product.compareAtPrice!,
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: AppColors.white.withValues(alpha: 0.8),
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: AppColors.white,
+                                        decorationThickness: 2,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 6.h),
+                                ],
+                                // Current Price
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 8.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [AppColors.primary, AppColors.secondary],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    CurrencyFormatter.formatIraqiDinar(product.price),
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(width: 12.w),
+
+                          // Add to Cart Button
+                          AnimatedBuilder(
+                            animation: pulseAnimation,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: 1.0 + (pulseAnimation.value * 0.05),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [Color(0xFFFFA500), Color(0xFFFFB84D)],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFFFFA500).withValues(alpha: 0.5),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 6),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        getIt<CartCubit>().addItem(
+                                          CartItem(
+                                            productId: product.id,
+                                            vendorId: product.vendorId,
+                                            qty: 1,
+                                            unitPrice: product.price,
+                                          ),
+                                        );
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(tr('added_to_cart')),
+                                            duration: const Duration(seconds: 2),
+                                            behavior: SnackBarBehavior.floating,
+                                          ),
+                                        );
+                                      },
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20.w,
+                                          vertical: 14.h,
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.shopping_cart_rounded,
+                                              color: AppColors.white,
+                                              size: 20.sp,
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            Text(
+                                              tr('add_to_cart'),
+                                              style: TextStyle(
+                                                color: AppColors.white,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
