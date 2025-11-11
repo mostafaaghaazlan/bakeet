@@ -363,7 +363,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent>
             ),
             TextButton(
               onPressed: () {
-                // TODO: Navigate to forgot password
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

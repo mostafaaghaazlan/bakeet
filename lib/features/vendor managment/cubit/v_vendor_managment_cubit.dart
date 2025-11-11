@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import '../../marketplace/data/model/product_model.dart';
 import '../../marketplace/data/model/vendor_model.dart';
 import '../../marketplace/data/repository/marketplace_repository.dart';
@@ -71,12 +70,12 @@ class VVendorManagmentCubit extends Cubit<VVendorManagmentState> {
   }
 
   void addProduct(ProductRegistrationModel product) {
-    print('🔵 Adding product: ${product.title}');
+    debugPrint('🔵 Adding product: ${product.title}');
     final products = List<ProductRegistrationModel>.from(_vendorData.products);
     products.add(product);
     _vendorData = _vendorData.copyWith(products: products);
-    print('🔵 Total products after add: ${_vendorData.products.length}');
-    print('🔵 Emitting ProductAdded state');
+    debugPrint('🔵 Total products after add: ${_vendorData.products.length}');
+    debugPrint('🔵 Emitting ProductAdded state');
     emit(ProductAdded(product));
   }
 
@@ -146,7 +145,9 @@ class VVendorManagmentCubit extends Cubit<VVendorManagmentState> {
       );
 
       // Convert products for preview
-      print('🟢 Preparing ${_vendorData.products.length} products for preview');
+      debugPrint(
+        '🟢 Preparing ${_vendorData.products.length} products for preview',
+      );
       final products = <ProductModel>[];
       for (final productReg in _vendorData.products) {
         // Use uploaded image files if available, otherwise use URLs, fallback to placeholder
@@ -175,11 +176,13 @@ class VVendorManagmentCubit extends Cubit<VVendorManagmentState> {
             )
             .toList();
 
-        print(
+        debugPrint(
           '🎨 Product ${productReg.title}: Converting ${productReg.availableColors.length} colors',
         );
         if (availableColors.isNotEmpty) {
-          print('🎨 Colors: ${availableColors.map((c) => c.name).join(", ")}');
+          debugPrint(
+            '🎨 Colors: ${availableColors.map((c) => c.name).join(", ")}',
+          );
         }
 
         final product = ProductModel(
@@ -221,25 +224,25 @@ class VVendorManagmentCubit extends Cubit<VVendorManagmentState> {
     emit(VendorRegistrationLoading());
     try {
       // Add vendor to repository
-      print('🟢 Adding vendor to repository: $vendorId - ${vendor.name}');
+      debugPrint('🟢 Adding vendor to repository: $vendorId - ${vendor.name}');
       await _repository.addVendor(vendor);
-      print('🟢 Vendor added successfully');
+      debugPrint('🟢 Vendor added successfully');
 
       // Add products
-      print('🟢 Adding ${products.length} products');
+      debugPrint('🟢 Adding ${products.length} products');
       for (final product in products) {
-        print(
+        debugPrint(
           '🟢 Adding product: ${product.title} (${product.id}) for vendor $vendorId with ${product.images.length} images and ${product.availableColors?.length ?? 0} colors',
         );
         if (product.availableColors != null &&
             product.availableColors!.isNotEmpty) {
-          print(
+          debugPrint(
             '🎨 Product colors: ${product.availableColors!.map((c) => c.name).join(", ")}',
           );
         }
         await _repository.addProduct(product);
       }
-      print('🟢 All products added successfully');
+      debugPrint('🟢 All products added successfully');
 
       emit(
         VendorPublished(

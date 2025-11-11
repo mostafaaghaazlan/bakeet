@@ -325,22 +325,24 @@ class MarketplaceRepository {
   Future<VendorModel> addVendor(VendorModel vendor) async {
     await Future.delayed(const Duration(milliseconds: 400));
     _vendors.add(vendor);
-    print('🔷 Vendor added to repository: ${vendor.id} - ${vendor.name}');
-    print('🔷 Total vendors in repository: ${_vendors.length}');
+    debugPrint('🔷 Vendor added to repository: ${vendor.id} - ${vendor.name}');
+    debugPrint('🔷 Total vendors in repository: ${_vendors.length}');
     return vendor;
   }
 
   Future<void> addProduct(ProductModel product) async {
     await Future.delayed(const Duration(milliseconds: 400));
     mockProducts.add(product);
-    print('🔷 Product added to repository: ${product.id} - ${product.title}');
-    print('🔷 Total products in repository: ${mockProducts.length}');
+    debugPrint(
+      '🔷 Product added to repository: ${product.id} - ${product.title}',
+    );
+    debugPrint('🔷 Total products in repository: ${mockProducts.length}');
   }
 
   Future<List<ProductModel>> getProductsByVendor(String vendorId) async {
     await Future.delayed(const Duration(milliseconds: 400));
     final products = mockProducts.where((p) => p.vendorId == vendorId).toList();
-    print(
+    debugPrint(
       '🔷 Getting products for vendor $vendorId: found ${products.length} products',
     );
     return products;

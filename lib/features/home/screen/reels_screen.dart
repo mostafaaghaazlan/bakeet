@@ -98,7 +98,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                     size: 28,
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.black.withOpacity(0.3),
+                    backgroundColor: Colors.black.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -425,7 +425,7 @@ class _ReelItemState extends State<ReelItem> {
                     child: Text(
                       'Original Audio - Artist Name',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -443,7 +443,7 @@ class _ReelItemState extends State<ReelItem> {
             child: Icon(
               Icons.play_arrow,
               size: 80,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
             ),
           ),
       ],

@@ -13,12 +13,12 @@ class AdaptiveImage extends StatelessWidget {
 
   const AdaptiveImage(
     this.url, {
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.fit,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   bool _isNetwork(String u) =>
       u.startsWith('http://') || u.startsWith('https://');

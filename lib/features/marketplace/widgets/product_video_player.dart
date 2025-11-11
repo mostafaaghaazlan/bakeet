@@ -67,7 +67,7 @@ class _ProductVideoPlayerState extends State<ProductVideoPlayer> {
         }
       }
     } catch (e) {
-      print('Error initializing video: $e');
+      debugPrint('Error initializing video: $e');
       if (!_isDisposed && mounted) {
         setState(() {
           _hasError = true;

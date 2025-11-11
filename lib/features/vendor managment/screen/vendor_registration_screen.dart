@@ -130,7 +130,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                 ),
               ).then((approved) async {
                 if (approved == true) {
-                  // User approved, now publish the vendor
+                  // ignore: use_build_context_synchronously
                   final cubit = context.read<VVendorManagmentCubit>();
                   await cubit.approveAndPublishVendor(
                     state.vendorId,
@@ -339,7 +339,9 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                             _primaryColor,
                             (color) {
                               setState(() => _primaryColor = color);
-                              cubit.updateVendorInfo(primaryColor: color.toARGB32());
+                              cubit.updateVendorInfo(
+                                primaryColor: color.toARGB32(),
+                              );
                             },
                           ),
                         ),
@@ -369,7 +371,9 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                             _accentColor,
                             (color) {
                               setState(() => _accentColor = color);
-                              cubit.updateVendorInfo(accentColor: color.toARGB32());
+                              cubit.updateVendorInfo(
+                                accentColor: color.toARGB32(),
+                              );
                             },
                           ),
                         ),
@@ -404,7 +408,9 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                                 borderRadius: BorderRadius.circular(12.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primary.withValues(alpha: 0.3),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),
@@ -446,83 +452,87 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                         ),
                         SizedBox(height: 20.h),
                         // Products List
-                        BlocBuilder<VVendorManagmentCubit, VVendorManagmentState>(
-                    buildWhen: (previous, current) {
-                      // Rebuild when products are added, updated, removed, or data is updated
-                      final shouldRebuild =
-                          current is ProductAdded ||
-                          current is ProductUpdated ||
-                          current is ProductRemoved ||
-                          current is VendorDataUpdated;
-                      debugPrint(
-                        '🟣 BlocBuilder buildWhen: shouldRebuild=$shouldRebuild, state=${current.runtimeType}',
-                      );
-                      return shouldRebuild;
-                    },
-                    builder: (context, state) {
-                      final currentCubit = context
-                          .read<VVendorManagmentCubit>();
-                      final products = currentCubit.vendorData.products;
-                      debugPrint(
-                        '🟣 BlocBuilder building with ${products.length} products',
-                      );
-                      if (products.isEmpty) {
-                        return Container(
-                          padding: EdgeInsets.all(32.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.neutral100,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: AppColors.neutral300,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.inventory_2_outlined,
-                                  size: 48.sp,
-                                  color: AppColors.neutral400,
-                                ),
-                                SizedBox(height: 12.h),
-                                Text(
-                                  tr('no_vendor_products_added'),
-                                  style: AppTextStyle.getMediumStyle(
-                                    color: AppColors.neutral600,
-                                    fontSize: 14.sp,
+                        BlocBuilder<
+                          VVendorManagmentCubit,
+                          VVendorManagmentState
+                        >(
+                          buildWhen: (previous, current) {
+                            // Rebuild when products are added, updated, removed, or data is updated
+                            final shouldRebuild =
+                                current is ProductAdded ||
+                                current is ProductUpdated ||
+                                current is ProductRemoved ||
+                                current is VendorDataUpdated;
+                            debugPrint(
+                              '🟣 BlocBuilder buildWhen: shouldRebuild=$shouldRebuild, state=${current.runtimeType}',
+                            );
+                            return shouldRebuild;
+                          },
+                          builder: (context, state) {
+                            final currentCubit = context
+                                .read<VVendorManagmentCubit>();
+                            final products = currentCubit.vendorData.products;
+                            debugPrint(
+                              '🟣 BlocBuilder building with ${products.length} products',
+                            );
+                            if (products.isEmpty) {
+                              return Container(
+                                padding: EdgeInsets.all(32.h),
+                                decoration: BoxDecoration(
+                                  color: AppColors.neutral100,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: AppColors.neutral300,
+                                    style: BorderStyle.solid,
                                   ),
                                 ),
-                                SizedBox(height: 8.h),
-                                Text(
-                                  tr('add_one_vendor_product'),
-                                  style: AppTextStyle.getRegularStyle(
-                                    color: AppColors.neutral400,
-                                    fontSize: 12.sp,
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.inventory_2_outlined,
+                                        size: 48.sp,
+                                        color: AppColors.neutral400,
+                                      ),
+                                      SizedBox(height: 12.h),
+                                      Text(
+                                        tr('no_vendor_products_added'),
+                                        style: AppTextStyle.getMediumStyle(
+                                          color: AppColors.neutral600,
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        tr('add_one_vendor_product'),
+                                        style: AppTextStyle.getRegularStyle(
+                                          color: AppColors.neutral400,
+                                          fontSize: 12.sp,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
+                              );
+                            }
 
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: products.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 12.h),
-                        itemBuilder: (context, index) {
-                          final product = products[index];
-                          return ProductCardWidget(
-                            product: product,
-                            onEdit: () => _showAddProductDialog(product, index),
-                            onDelete: () => cubit.removeProduct(index),
-                          );
-                        },
-                      );
-                    },
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: products.length,
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 12.h),
+                              itemBuilder: (context, index) {
+                                final product = products[index];
+                                return ProductCardWidget(
+                                  product: product,
+                                  onEdit: () =>
+                                      _showAddProductDialog(product, index),
+                                  onDelete: () => cubit.removeProduct(index),
+                                );
+                              },
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -550,11 +560,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
           end: Alignment.bottomRight,
           colors: isLoading
               ? [AppColors.neutral400, AppColors.neutral600]
-              : [
-                  AppColors.primary,
-                  AppColors.primary600,
-                  AppColors.secondary,
-                ],
+              : [AppColors.primary, AppColors.primary600, AppColors.secondary],
         ),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: isLoading
@@ -591,8 +597,9 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
                         width: 20.w,
                         height: 20.h,
                         child: const CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                           strokeWidth: 2,
                         ),
                       ),
@@ -682,10 +689,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary600,
-                ],
+                colors: [AppColors.primary, AppColors.primary600],
               ),
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
@@ -749,11 +753,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
             ),
             borderRadius: BorderRadius.circular(12.r),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-            size: 24.sp,
-          ),
+          child: Icon(icon, color: AppColors.primary, size: 24.sp),
         ),
         SizedBox(width: 12.w),
         Expanded(
@@ -815,18 +815,11 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
         decoration: BoxDecoration(
           color: AppColors.neutral50,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: AppColors.neutral200,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.neutral200, width: 1),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 24.sp,
-            ),
+            Icon(icon, color: color, size: 24.sp),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -843,10 +836,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: Colors.white,
-                  width: 3,
-                ),
+                border: Border.all(color: Colors.white, width: 3),
                 boxShadow: [
                   BoxShadow(
                     color: color.withValues(alpha: 0.4),
@@ -857,11 +847,7 @@ class _VendorRegistrationScreenState extends State<VendorRegistrationScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            Icon(
-              Icons.edit_rounded,
-              color: AppColors.neutral400,
-              size: 20.sp,
-            ),
+            Icon(Icons.edit_rounded, color: AppColors.neutral400, size: 20.sp),
           ],
         ),
       ),

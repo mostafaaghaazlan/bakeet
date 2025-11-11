@@ -57,7 +57,7 @@ class StorefrontPreviewScreen extends StatelessWidget {
           // Preview Banner
           SliverToBoxAdapter(
             child: Container(
-              color: theme.accentColor.withOpacity(0.2),
+              color: theme.accentColor.withValues(alpha: 0.2),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Row(
                 children: [
@@ -92,7 +92,7 @@ class StorefrontPreviewScreen extends StatelessWidget {
                       border: Border.all(color: theme.primaryColor, width: 3),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.primaryColor.withOpacity(0.2),
+                          color: theme.primaryColor.withValues(alpha: 0.2),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -210,7 +210,7 @@ class StorefrontPreviewScreen extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -4),
             ),
@@ -283,7 +283,7 @@ class StorefrontPreviewScreen extends StatelessWidget {
         border: Border.all(color: AppColors.neutral200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

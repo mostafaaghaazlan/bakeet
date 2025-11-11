@@ -134,10 +134,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primary600,
-                  ],
+                  colors: [AppColors.primary, AppColors.primary600],
                 ),
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -170,12 +167,17 @@ class _AddProductDialogState extends State<AddProductDialog> {
       );
 
       if (confirmed == true && nameController.text.isNotEmpty) {
-        print('🎨 Color selected: ${nameController.text} with value ${selectedColor!.toARGB32()}');
+        debugPrint(
+          '🎨 Color selected: ${nameController.text} with value ${selectedColor!.toARGB32()}',
+        );
         setState(() {
           _selectedColors.add(
-            ColorOption(name: nameController.text, colorValue: selectedColor!.toARGB32()),
+            ColorOption(
+              name: nameController.text,
+              colorValue: selectedColor!.toARGB32(),
+            ),
           );
-          print('🎨 Total colors after add: ${_selectedColors.length}');
+          debugPrint('🎨 Total colors after add: ${_selectedColors.length}');
         });
       }
       nameController.dispose();
@@ -183,12 +185,14 @@ class _AddProductDialogState extends State<AddProductDialog> {
   }
 
   void _saveProduct() {
-    print('🟢 Save product called');
+    debugPrint('🟢 Save product called');
     if (_formKey.currentState!.validate()) {
-      print('🟢 Form validated successfully');
-      print('🎨 Saving product with ${_selectedColors.length} colors');
+      debugPrint('🟢 Form validated successfully');
+      debugPrint('🎨 Saving product with ${_selectedColors.length} colors');
       if (_selectedColors.isNotEmpty) {
-        print('🎨 Colors: ${_selectedColors.map((c) => '${c.name}(${c.colorValue})').join(', ')}');
+        debugPrint(
+          '🎨 Colors: ${_selectedColors.map((c) => '${c.name}(${c.colorValue})').join(', ')}',
+        );
       }
       final product = ProductRegistrationModel(
         id: widget.product?.id ?? DateTime.now().toString(),
@@ -209,13 +213,13 @@ class _AddProductDialogState extends State<AddProductDialog> {
         availableColors: _selectedColors,
       );
 
-      print('🟢 Calling onSave callback with product: ${product.title}');
-      print('🎨 Product has ${product.availableColors.length} colors');
+      debugPrint('🟢 Calling onSave callback with product: ${product.title}');
+      debugPrint('🎨 Product has ${product.availableColors.length} colors');
       widget.onSave(product);
-      print('🟢 Closing dialog');
+      debugPrint('🟢 Closing dialog');
       Navigator.pop(context);
     } else {
-      print('🔴 Form validation failed');
+      debugPrint('🔴 Form validation failed');
     }
   }
 
@@ -496,7 +500,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                               borderRadius: BorderRadius.circular(10.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -541,7 +547,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                         Wrap(
                           spacing: 8.w,
                           runSpacing: 8.h,
-                          children: _selectedColors.asMap().entries.map((entry) {
+                          children: _selectedColors.asMap().entries.map((
+                            entry,
+                          ) {
                             final index = entry.key;
                             final color = entry.value;
                             return Container(
@@ -549,7 +557,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                                 color: AppColors.neutral50,
                                 borderRadius: BorderRadius.circular(20.r),
                                 border: Border.all(
-                                  color: Color(color.colorValue).withValues(alpha: 0.3),
+                                  color: Color(
+                                    color.colorValue,
+                                  ).withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
@@ -580,8 +590,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Color(color.colorValue)
-                                                    .withValues(alpha: 0.4),
+                                                color: Color(
+                                                  color.colorValue,
+                                                ).withValues(alpha: 0.4),
                                                 blurRadius: 4,
                                                 offset: const Offset(0, 2),
                                               ),
@@ -772,10 +783,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
   }
 
   // Modern Section Header
-  Widget _buildSectionHeader({
-    required IconData icon,
-    required String title,
-  }) {
+  Widget _buildSectionHeader({required IconData icon, required String title}) {
     return Row(
       children: [
         Container(
@@ -789,11 +797,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
             ),
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-            size: 18.sp,
-          ),
+          child: Icon(icon, color: AppColors.primary, size: 18.sp),
         ),
         SizedBox(width: 10.w),
         Text(
